@@ -23,11 +23,11 @@ class swisspublictransportApp extends Application.AppBase {
         return [ new swisspublictransportView() ];
     }
 
-    (:glance)
+    /*(:glance)
     function getGlanceView() as [GlanceView] or [GlanceView, GlanceViewDelegate] or Null {
         // delegates: other stops
         return [ new glanceView() ];
-    }
+    }*/
 
     function onActive(state) as Void {
     }
