@@ -3,7 +3,7 @@ import Toybox.Communications;
 import Toybox.Lang;
 
 class JsonTransaction {
-    static function makeRequest(method as String, params as Dictionary, callback as Method) as Void {
+    static function makeRequest(method as String, params as Dictionary?, callback as Method) as Void {
         var url = "https://sbb.baramex.me" + method;                         // set the url
 
         var options = {                                             // set the options

@@ -34,8 +34,6 @@ class swisspublictransportApp extends Application.AppBase {
 
     function onInactive(state) as Void {
     }
-
-    
 }
 
 function getApp() as swisspublictransportApp {
