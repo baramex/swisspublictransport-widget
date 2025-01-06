@@ -12,6 +12,7 @@ class swisspublictransportView extends WatchUi.View {
     DISPLAY,
   }
 
+  var heading as Float?;
   var position as Position.Location?;
   var appState as AppState = GET_LOCATION;
   var currentStop as Number?;
@@ -23,12 +24,14 @@ class swisspublictransportView extends WatchUi.View {
   var groupRef = ({}) as Dictionary<String, Number>;
 
   var verticalScrollBar;
+  var horizontalScrollBar;
 
   var stateText;
   var progressBar;
   var distanceText;
 
   var timer;
+  var loading = false;
 
   function initialize() {
     View.initialize();
@@ -48,6 +51,19 @@ class swisspublictransportView extends WatchUi.View {
     dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
     dc.clear();
 
+    if (
+      currentStop != null &&
+      horizontalScrollBar != null &&
+      currentStop != horizontalScrollBar.position
+    ) {
+      currentStop = horizontalScrollBar.position;
+      appState = GET_DEPARTURES;
+      departureGroups = {};
+      groupRef = {};
+      departures = {};
+      onTimer();
+    }
+
     if (appState == GET_LOCATION) {
       stateText.setText("Récupération de la position...");
     } else if (appState == GET_STOPS) {
@@ -59,7 +75,7 @@ class swisspublictransportView extends WatchUi.View {
     }
 
     if (currentStop != null && stops.hasKey(currentStop)) {
-      var stop = stops[currentStop];
+      var stop = stops.get(currentStop);
       var stopText = stop.name;
       var stopLocation = new Position.Location({
         :latitude => stop.lat,
@@ -133,44 +149,54 @@ class swisspublictransportView extends WatchUi.View {
       distanceText.setText(Math.round(distance).toNumber() + "m");
       distanceText.draw(dc);
 
-      var angle = PositionUtils.getAngle(position, stopLocation);
+      if (heading == null) {
+        heading = 0.0;
+      }
+      var angle = PositionUtils.getAngle(position, stopLocation) + heading;
 
-      var x1 = 144 + 20 * Math.cos(angle);
+      var x1 = 140 + 20 * Math.cos(angle);
       var y1 = 20 + 12 * Math.sin(angle);
-      var x2 = 144 - 20 * Math.cos(angle);
+      var x2 = 140 - 20 * Math.cos(angle);
       var y2 = 20 - 12 * Math.sin(angle);
       dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_BLACK);
       dc.setPenWidth(3);
       dc.drawLine(x1, y1, x2, y2);
       // arrow head
-      var x3 = 144 - 10 * Math.cos(angle + Math.PI / 2);
+      var x3 = 140 - 10 * Math.cos(angle + Math.PI / 2);
       var y3 = 20 - 6 * Math.sin(angle + Math.PI / 2);
-      var x4 = 144 - 10 * Math.cos(angle - Math.PI / 2);
+      var x4 = 140 - 10 * Math.cos(angle - Math.PI / 2);
       var y4 = 20 - 6 * Math.sin(angle - Math.PI / 2);
       dc.drawLine(x2, y2, x3, y3);
       dc.drawLine(x2, y2, x4, y4);
       dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
+
+      if (horizontalScrollBar != null) {
+        horizontalScrollBar.draw(dc);
+      }
     }
 
     if (appState == DISPLAY) {
       if (departures.size() < 1) {
         stateText.setText("Aucun départ trouvé");
       } else {
-        for (
-          var i = verticalScrollBar.position;
-          i < verticalScrollBar.position + 2;
-          i++
-        ) {
+        var pos = 0;
+        if (verticalScrollBar != null) {
+          pos = verticalScrollBar.position;
+        }
+        for (var i = pos; i < pos + 2; i++) {
           if (i >= departureGroups.size()) {
             break;
           }
-          var ldepartures = departureGroups[i];
+          var ldepartures = departureGroups.get(i);
+          if (ldepartures.size() == 0) {
+            continue;
+          }
           var departureElement = new DepartureGroupElement({
             :lineName => ldepartures.values()[0].lineName,
             :platformName => ldepartures.values()[0].platformName,
             :locX => 6,
-            :locY => 67 + (i - verticalScrollBar.position) * 52,
-            :departures => ldepartures.values(),
+            :locY => 67 + (i - pos) * 52,
+            :departures => ldepartures,
             :destinationName => ldepartures.values()[0].destinationName,
           });
           departureElement.draw(dc);
@@ -210,7 +236,7 @@ class swisspublictransportView extends WatchUi.View {
       :justification => Graphics.TEXT_JUSTIFY_CENTER,
     });
     distanceText = new WatchUi.Text({
-      :locX => 144,
+      :locX => 140,
       :locY => 35,
       :font => Graphics.FONT_TINY,
       :justification => Graphics.TEXT_JUSTIFY_CENTER,
@@ -222,6 +248,7 @@ class swisspublictransportView extends WatchUi.View {
     if (currentStop == null) {
       return;
     }
+    loading = true;
     JsonTransaction.makeRequest(
       "/stops/" + stops[currentStop].ref + "/departures",
       null,
@@ -233,6 +260,7 @@ class swisspublictransportView extends WatchUi.View {
   // state of this View here. This includes freeing resources from
   // memory.
   function onHide() as Void {
+    loading = false;
     Position.enableLocationEvents(
       Position.LOCATION_DISABLE,
       method(:onPosition)
@@ -244,6 +272,7 @@ class swisspublictransportView extends WatchUi.View {
   }
 
   function onDepartures(responseCode as Number, data as Dictionary?) as Void {
+    loading = false;
     if (responseCode != 200) {
       System.println("Error getting departures");
       return;
@@ -281,8 +310,10 @@ class swisspublictransportView extends WatchUi.View {
       if (departureGroups[i].size() == 0) {
         groupRef.remove(groupRef.keys()[groupRef.values().indexOf(i)]);
         departureGroups.remove(i);
-        if (i < verticalScrollBar.position) {
-          verticalScrollBar.position--;
+        if (verticalScrollBar != null) {
+          if (i < verticalScrollBar.position) {
+            verticalScrollBar.position--;
+          }
         }
       }
     }
@@ -324,25 +355,18 @@ class swisspublictransportView extends WatchUi.View {
 
     if (appState == GET_DEPARTURES) {
       appState = DISPLAY;
-      timer = new Timer.Timer();
-      timer.start(self.method(:onTimer), 15000, true);
+      if (timer == null) {
+        timer = new Timer.Timer();
+        timer.start(self.method(:onTimer), 15000, true);
+      }
     }
     requestUpdate();
 
     System.println("got departures");
   }
 
-  function getDepartureGroupsSize() {
-    var size = 0;
-    for (var i = 0; i < departureGroups.size(); i++) {
-      if (departureGroups[i].size() > 0) {
-        size++;
-      }
-    }
-    return size;
-  }
-
   function onStops(responseCode as Number, data as Dictionary?) as Void {
+    loading = false;
     if (responseCode != 200) {
       System.println("Error getting stops");
       return;
@@ -371,22 +395,27 @@ class swisspublictransportView extends WatchUi.View {
     if (appState == GET_STOPS) {
       appState = GET_DEPARTURES;
     }
+
+    if (stops.size() > 1) {
+      horizontalScrollBar = new HorizontalScrollBar({
+        :length => stops.size(),
+        :position => currentStop,
+      });
+    } else {
+      horizontalScrollBar = null;
+    }
+
     requestUpdate();
 
     System.println("got stops");
 
-    if (currentStop != null) {
-      JsonTransaction.makeRequest(
-        "/stops/" + stops[currentStop].ref + "/departures",
-        null,
-        method(:onDepartures)
-      );
-    }
+    onTimer();
   }
 
   function onPosition(info as Position.Info) as Void {
     System.println("updated position");
     position = info.position;
+    heading = info.heading;
     if (position == null) {
       return;
     }
@@ -394,6 +423,7 @@ class swisspublictransportView extends WatchUi.View {
       appState = GET_STOPS;
       requestUpdate();
     }
+    loading = true;
     JsonTransaction.makeRequest(
       "/stops/nearby",
       { "lat" => position.toDegrees()[0], "lon" => position.toDegrees()[1] },

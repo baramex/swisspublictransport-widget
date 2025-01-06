@@ -32,4 +32,21 @@ class NavDelegate extends WatchUi.BehaviorDelegate {
     }
     return false;
   }
+
+  function onSelect() {
+    if (view.loading) {
+      return false;
+    }
+    if (view.horizontalScrollBar != null) {
+      view.horizontalScrollBar.position++;
+      if (
+        view.horizontalScrollBar.position >= view.horizontalScrollBar.length
+      ) {
+        view.horizontalScrollBar.position = 0;
+      }
+      view.requestUpdate();
+      return true;
+    }
+    return false;
+  }
 }

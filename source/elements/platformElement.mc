@@ -17,6 +17,8 @@ class PlatformElement {
     var w = dc.getTextWidthInPixels(platformName, Graphics.FONT_TINY);
     var h = dc.getFontHeight(Graphics.FONT_TINY);
     dc.setPenWidth(1);
+    dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
+    dc.fillRoundedRectangle(locX, locY, w + 4, h, 5);
     dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
     dc.drawRoundedRectangle(locX, locY, w + 4, h, 5);
     dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);

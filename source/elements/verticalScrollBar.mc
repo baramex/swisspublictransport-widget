@@ -15,20 +15,22 @@ class VerticalScrollBar {
     dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
     var y = 51;
     var height = 75;
+    var gap = 1;
+    var size = (height - gap * (length - 1)) / length;
     for (var i = 0; i < length; i++) {
       if (i == position) {
         dc.fillRectangle(
           1,
-          y + i * (height / (length + 1) + 1),
+          y + i * size + i * gap,
           3,
-          height / (length + 1)
+          size
         );
       } else {
         dc.drawRectangle(
           1,
-          y + i * (height / (length + 1) + 1),
+          y + i * size + i * gap,
           3,
-          height / (length + 1)
+          size
         );
       }
     }

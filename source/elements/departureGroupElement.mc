@@ -7,14 +7,14 @@ class DepartureGroupElement {
   var platformName as String;
   var locX as Number;
   var locY as Number;
-  var departures as Array<Departure>;
+  var departures as Dictionary<Number, Departure>;
   var destinationName as String;
 
   public function initialize(params as Dictionary) {
     lineName = params.get(:lineName) as String;
     locX = params.get(:locX) as Number;
     locY = params.get(:locY) as Number;
-    departures = params.get(:departures) as Array<Departure>;
+    departures = params.get(:departures) as Dictionary<Number, Departure>;
     platformName = params.get(:platformName) as String;
     destinationName = params.get(:destinationName) as String;
   }
@@ -26,7 +26,7 @@ class DepartureGroupElement {
       :locY => locY,
     });
     lineElement.draw(dc);
-    
+
     dc.drawText(
       locX + lineElement.getWidth(dc) + 4,
       locY + lineElement.getHeight(dc) / 2,
@@ -36,8 +36,14 @@ class DepartureGroupElement {
     );
 
     var depText = "";
-    for (var j = 0; j < departures.size(); j++) {
-      var dep = departures[j];
+    var j = 0;
+    var i = 0;
+    while (j < departures.size()) {
+      var dep = null;
+      while(dep == null) {
+        dep = departures.get(i);
+        i++;
+      }
       var time = dep.departureTime;
       var relative = time.subtract(Time.now());
       if (relative.value() < 15) {
@@ -45,6 +51,7 @@ class DepartureGroupElement {
       } else {
         depText += Math.ceil(relative.value() / 60.0).toNumber() + "'  ";
       }
+      j++;
     }
     dc.drawText(
       locX + lineElement.getWidth(dc) + 4,
@@ -55,12 +62,15 @@ class DepartureGroupElement {
     );
 
     var offset = 0;
-    if(locY > 100) {
-        offset = 20;
+    if (locY > 100) {
+      offset = 20;
     }
     var platformElement = new PlatformElement({
       :platformName => platformName,
-      :locX => 176 - dc.getTextWidthInPixels(platformName, Graphics.FONT_TINY) - 8 - offset,
+      :locX => 176 -
+      dc.getTextWidthInPixels(platformName, Graphics.FONT_TINY) -
+      8 -
+      offset,
       :locY => locY + 26,
     });
     platformElement.draw(dc);
