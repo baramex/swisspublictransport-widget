@@ -20,6 +20,7 @@ class swisspublictransportView extends WatchUi.View {
 
   var departureGroups =
     ({}) as Dictionary<Number, Dictionary<Number, Departure> >;
+  var groupRef = ({}) as Dictionary<String, Number>;
 
   var verticalScrollBar;
 
@@ -155,7 +156,11 @@ class swisspublictransportView extends WatchUi.View {
       if (departures.size() < 1) {
         stateText.setText("Aucun départ trouvé");
       } else {
-        for (var i = verticalScrollBar.position; i < verticalScrollBar.position + 2; i++) {
+        for (
+          var i = verticalScrollBar.position;
+          i < verticalScrollBar.position + 2;
+          i++
+        ) {
           if (i >= departureGroups.size()) {
             break;
           }
@@ -245,9 +250,11 @@ class swisspublictransportView extends WatchUi.View {
     }
     departures = Formatter.getDeparturesFromData(data);
 
-    departureGroups =
-      ({}) as Dictionary<Number, Dictionary<Number, Departure> >;
-    var groupRef = ({}) as Dictionary<String, Number>;
+    if (departureGroups.size() > 0) {
+      for (var i = 0; i < departureGroups.size(); i++) {
+        departureGroups[i].clear();
+      }
+    }
     for (var i = 0; i < departures.size(); i++) {
       var departure = departures[i];
       if (departure.cancelled || departure.deviation) {
@@ -269,6 +276,37 @@ class swisspublictransportView extends WatchUi.View {
         departureGroups[index] = {};
       }
       departureGroups[index].put(departure.order, departure);
+    }
+    for (var i = 0; i < departureGroups.size(); i++) {
+      if (departureGroups[i].size() == 0) {
+        groupRef.remove(
+          departureGroups[i].values()[0].lineName +
+            departureGroups[i].values()[0].destinationName +
+            departureGroups[i].values()[0].platformName
+        );
+        departureGroups.remove(i);
+        if (i < verticalScrollBar.position) {
+          verticalScrollBar.position--;
+        }
+      }
+    }
+    var pos = 0;
+    while (pos < departureGroups.size()) {
+      var el = departureGroups[pos];
+      if (el == null) {
+        var nextIndex = pos + 1;
+        while (departureGroups[nextIndex] == null) {
+          nextIndex++;
+        }
+        el[pos] = departureGroups[nextIndex];
+        groupRef[
+          departureGroups[nextIndex].values()[0].lineName +
+            departureGroups[nextIndex].values()[0].destinationName +
+            departureGroups[nextIndex].values()[0].platformName
+        ] = pos;
+        departureGroups.remove(nextIndex);
+      }
+      pos++;
     }
 
     if (departureGroups.size() > 2) {
@@ -300,6 +338,16 @@ class swisspublictransportView extends WatchUi.View {
     requestUpdate();
 
     System.println("got departures");
+  }
+
+  function getDepartureGroupsSize() {
+    var size = 0;
+    for (var i = 0; i < departureGroups.size(); i++) {
+      if (departureGroups[i].size() > 0) {
+        size++;
+      }
+    }
+    return size;
   }
 
   function onStops(responseCode as Number, data as Dictionary?) as Void {

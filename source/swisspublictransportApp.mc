@@ -19,8 +19,9 @@ class swisspublictransportApp extends Application.AppBase {
 
     // Return the initial view of your application here
     function getInitialView() as [Views] or [Views, InputDelegates] {
-        // delegates: other stops
-        return [ new swisspublictransportView() ];
+        var view = new swisspublictransportView();
+        var delegate = new NavDelegate(view);
+        return [ view, delegate ];
     }
 
     /*(:glance)
