@@ -18,7 +18,10 @@ class swisspublictransportView extends WatchUi.View {
   var stops = ({}) as Dictionary<Number, Stop>;
   var departures = ({}) as Dictionary<Number, Departure>;
 
-  var hscroll = 0;
+  var departureGroups =
+    ({}) as Dictionary<Number, Dictionary<Number, Departure> >;
+
+  var verticalScrollBar;
 
   var stateText;
   var progressBar;
@@ -152,65 +155,29 @@ class swisspublictransportView extends WatchUi.View {
       if (departures.size() < 1) {
         stateText.setText("Aucun départ trouvé");
       } else {
-        // create groups by line and destination
-        var departureGroups =
-          ({}) as Dictionary<Number, Dictionary<Number, Departure> >;
-        var groupRef = ({}) as Dictionary<String, Number>;
-        for (var i = 0; i < departures.size(); i++) {
-          var departure = departures[i];
-          if (departure.cancelled || departure.deviation) {
-            continue;
+        for (var i = verticalScrollBar.position; i < verticalScrollBar.position + 2; i++) {
+          if (i >= departureGroups.size()) {
+            break;
           }
-          var index = groupRef[departure.lineName + departure.destinationName];
-          if (index == null) {
-            index = departureGroups.size();
-            groupRef[departure.lineName + departure.destinationName] = index;
-            departureGroups[index] = {};
-          }
-          departureGroups[index].put(departure.order, departure);
-        }
-        for (var i = 0; i < departureGroups.size(); i++) {
           var ldepartures = departureGroups[i];
-          var lineNumber = new LineNumber({
+          var departureElement = new DepartureGroupElement({
             :lineName => ldepartures.values()[0].lineName,
-            :locX => 4,
-            :locY => 67 + i * 26,
+            :platformName => ldepartures.values()[0].platformName,
+            :locX => 6,
+            :locY => 67 + (i - verticalScrollBar.position) * 52,
+            :departures => ldepartures.values(),
+            :destinationName => ldepartures.values()[0].destinationName,
           });
-          lineNumber.draw(dc);
-          dc.drawText(
-            4 + lineNumber.getWidth(dc) + 4,
-            67 + i * 26 + lineNumber.getHeight(dc) / 2,
-            Graphics.FONT_TINY,
-            ldepartures.values()[0].destinationName,
-            Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER
-          );
-          var nextDepatures = ldepartures.values();
-          var depText = "";
-          for (var j = 0; j < nextDepatures.size(); j++) {
-            var dep = nextDepatures[j];
-            var time = dep.departureTime;
-            var relative = time.subtract(Time.now());
-            if (relative.value() < 15) {
-              depText += "🚌  ";
-            } else {
-              depText += Math.ceil(relative.value() / 60) + "'  ";
-            }
-          }
-          dc.drawText(
-            4 + lineNumber.getWidth(dc) + 4,
-            93 + i * 26,
-            Graphics.FONT_SMALL,
-            depText,
-            Graphics.TEXT_JUSTIFY_LEFT
-          );
-          i++;
+          departureElement.draw(dc);
+        }
+
+        if (verticalScrollBar != null) {
+          verticalScrollBar.draw(dc);
         }
       }
     }
 
     stateText.draw(dc);
-    // display according to states (either loc getting, stop getting, departure getting or displaying)
-    // draw progress bars etc
   }
 
   // Called when this View is brought to the foreground. Restore
@@ -277,6 +244,54 @@ class swisspublictransportView extends WatchUi.View {
       return;
     }
     departures = Formatter.getDeparturesFromData(data);
+
+    departureGroups =
+      ({}) as Dictionary<Number, Dictionary<Number, Departure> >;
+    var groupRef = ({}) as Dictionary<String, Number>;
+    for (var i = 0; i < departures.size(); i++) {
+      var departure = departures[i];
+      if (departure.cancelled || departure.deviation) {
+        continue;
+      }
+      var index =
+        groupRef[
+          departure.lineName +
+            departure.destinationName +
+            departure.platformName
+        ];
+      if (index == null) {
+        index = departureGroups.size();
+        groupRef[
+          departure.lineName +
+            departure.destinationName +
+            departure.platformName
+        ] = index;
+        departureGroups[index] = {};
+      }
+      departureGroups[index].put(departure.order, departure);
+    }
+
+    if (departureGroups.size() > 2) {
+      var currentPosition = 0;
+      if (verticalScrollBar != null) {
+        currentPosition = verticalScrollBar.position;
+      }
+
+      if (currentPosition > departureGroups.size() - 2) {
+        currentPosition = departureGroups.size() - 2;
+      }
+      if (currentPosition < 0) {
+        currentPosition = 0;
+      }
+
+      verticalScrollBar = new VerticalScrollBar({
+        :length => departureGroups.size(),
+        :position => currentPosition,
+      });
+    } else {
+      verticalScrollBar = null;
+    }
+
     if (appState == GET_DEPARTURES) {
       appState = DISPLAY;
       timer = new Timer.Timer();

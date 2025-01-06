@@ -32,7 +32,6 @@ class PositionUtils {
     var lat2 = loc2.toRadians()[0];
     var lon2 = loc2.toRadians()[1];
 
-    var dy = lat2 - lat1;
     var dx = lon2 - lon1;
 
     var y = Math.sin(dx) * Math.cos(lat2);
