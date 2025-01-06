@@ -279,11 +279,7 @@ class swisspublictransportView extends WatchUi.View {
     }
     for (var i = 0; i < departureGroups.size(); i++) {
       if (departureGroups[i].size() == 0) {
-        groupRef.remove(
-          departureGroups[i].values()[0].lineName +
-            departureGroups[i].values()[0].destinationName +
-            departureGroups[i].values()[0].platformName
-        );
+        groupRef.remove(groupRef.keys()[groupRef.values().indexOf(i)]);
         departureGroups.remove(i);
         if (i < verticalScrollBar.position) {
           verticalScrollBar.position--;
@@ -299,11 +295,7 @@ class swisspublictransportView extends WatchUi.View {
           nextIndex++;
         }
         departureGroups[pos] = departureGroups[nextIndex];
-        groupRef[
-          departureGroups[nextIndex].values()[0].lineName +
-            departureGroups[nextIndex].values()[0].destinationName +
-            departureGroups[nextIndex].values()[0].platformName
-        ] = pos;
+        groupRef[groupRef.keys()[groupRef.values().indexOf(nextIndex)]] = pos;
         departureGroups.remove(nextIndex);
       }
       pos++;
@@ -323,7 +315,7 @@ class swisspublictransportView extends WatchUi.View {
       }
 
       verticalScrollBar = new VerticalScrollBar({
-        :length => departureGroups.size(),
+        :length => departureGroups.size() - 1,
         :position => currentPosition,
       });
     } else {
