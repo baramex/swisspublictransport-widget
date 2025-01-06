@@ -252,7 +252,7 @@ class swisspublictransportView extends WatchUi.View {
 
     if (departureGroups.size() > 0) {
       for (var i = 0; i < departureGroups.size(); i++) {
-        departureGroups[i].clear();
+        departureGroups[i] = {};
       }
     }
     for (var i = 0; i < departures.size(); i++) {
@@ -298,7 +298,7 @@ class swisspublictransportView extends WatchUi.View {
         while (departureGroups[nextIndex] == null) {
           nextIndex++;
         }
-        el[pos] = departureGroups[nextIndex];
+        departureGroups[pos] = departureGroups[nextIndex];
         groupRef[
           departureGroups[nextIndex].values()[0].lineName +
             departureGroups[nextIndex].values()[0].destinationName +
