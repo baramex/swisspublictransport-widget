@@ -4,7 +4,7 @@ import Toybox.Lang;
 
 class DepartureGroupElement {
   var lineName as String;
-  var platformName as String;
+  var platformName as String?;
   var locX as Number;
   var locY as Number;
   var departures as Dictionary<Number, Departure>;
@@ -40,7 +40,7 @@ class DepartureGroupElement {
     var i = 0;
     while (j < departures.size()) {
       var dep = null;
-      while(dep == null) {
+      while (dep == null) {
         dep = departures.get(i);
         i++;
       }
@@ -65,14 +65,16 @@ class DepartureGroupElement {
     if (locY > 100) {
       offset = 20;
     }
-    var platformElement = new PlatformElement({
-      :platformName => platformName,
-      :locX => 176 -
-      dc.getTextWidthInPixels(platformName, Graphics.FONT_TINY) -
-      8 -
-      offset,
-      :locY => locY + 26,
-    });
-    platformElement.draw(dc);
+    if (platformName != null) {
+      var platformElement = new PlatformElement({
+        :platformName => platformName,
+        :locX => 176 -
+        dc.getTextWidthInPixels(platformName, Graphics.FONT_TINY) -
+        8 -
+        offset,
+        :locY => locY + 26,
+      });
+      platformElement.draw(dc);
+    }
   }
 }
