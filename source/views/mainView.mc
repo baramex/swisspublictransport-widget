@@ -191,7 +191,7 @@ class swisspublictransportView extends WatchUi.View {
             app.departureGroups = {};
             app.groupRef = {};
             app.departures = {};
-            app.state = app.GET_DEPARTURES;
+            app.appState = app.GET_DEPARTURES;
             app.updateDepartures(true);
         }
     }
