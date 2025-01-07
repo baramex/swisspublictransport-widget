@@ -158,7 +158,7 @@ class swisspublictransportApp extends Application.AppBase {
 
     if (departureGroups.size() > 2) {
       var currentPosition = 0;
-      if (view.verticalScrollBar != null) {
+      if (view != null && view.verticalScrollBar != null) {
         currentPosition = view.verticalScrollBar.position;
       }
 
@@ -169,11 +169,13 @@ class swisspublictransportApp extends Application.AppBase {
         currentPosition = 0;
       }
 
+        if(view != null) {
       view.verticalScrollBar = new VerticalScrollBar({
         :length => departureGroups.size() - 1,
         :position => currentPosition,
       });
-    } else {
+        }
+    } else if(view != null) {
       view.verticalScrollBar = null;
     }
 
@@ -184,7 +186,9 @@ class swisspublictransportApp extends Application.AppBase {
         timer.start(self.method(:onTimer), 15000, true);
       }
     }
+    if(view != null) {
     view.requestUpdate();
+    }
 
     System.println("got departures");
   }
@@ -220,6 +224,7 @@ class swisspublictransportApp extends Application.AppBase {
       appState = GET_DEPARTURES;
     }
 
+if(view != null) {
     if (stops.size() > 1) {
       view.horizontalScrollBar = new HorizontalScrollBar({
         :length => stops.size(),
@@ -230,6 +235,7 @@ class swisspublictransportApp extends Application.AppBase {
     }
 
     view.requestUpdate();
+}
 
     System.println("got stops");
 
@@ -238,7 +244,6 @@ class swisspublictransportApp extends Application.AppBase {
 
   function onPosition(info as Position.Info) as Void {
     System.println("updated position");
-    System.println(view);
     position = info.position;
     heading = info.heading;
     if (position == null) {
@@ -246,7 +251,9 @@ class swisspublictransportApp extends Application.AppBase {
     }
     if (appState == GET_LOCATION) {
       appState = GET_STOPS;
+      if(view != null) {
       view.requestUpdate();
+      }
     }
     loading = true;
     JsonTransaction.makeRequest(

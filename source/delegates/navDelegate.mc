@@ -34,7 +34,7 @@ class NavDelegate extends WatchUi.BehaviorDelegate {
   }
 
   function onSelect() {
-    if (view.loading) {
+    if (getApp().loading) {
       return false;
     }
     if (view.horizontalScrollBar != null) {
