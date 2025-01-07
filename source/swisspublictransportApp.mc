@@ -48,6 +48,7 @@ class swisspublictransportApp extends Application.AppBase {
       Position.LOCATION_CONTINUOUS,
       method(:onPosition)
     );
+    onPosition(Position.getInfo());
   }
 
   // onStop() is called when your application is exiting
@@ -221,6 +222,7 @@ class swisspublictransportApp extends Application.AppBase {
     if (currentStop == null && stops.size() > 0) {
       currentStop = 0;
       updateDepartures(true);
+      appState = GET_DEPARTURES;
     }
     if (appState == GET_STOPS) {
       appState = GET_DEPARTURES;
