@@ -2,7 +2,6 @@ import Toybox.WatchUi;
 import Toybox.Graphics;
 import Toybox.Lang;
 
-(:glance)
 class LineElement {
   var lineName as String;
   var locX as Number;

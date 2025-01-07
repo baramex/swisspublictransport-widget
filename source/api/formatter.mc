@@ -1,7 +1,6 @@
 import Toybox.Lang;
 import Toybox.Time;
 
-(:glance)
 class Formatter {
     static function getStopsFromData(data as Dictionary?) as Dictionary<Number, Stop> {
         var stops = {} as Dictionary<Number, Stop>;

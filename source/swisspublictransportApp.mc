@@ -4,7 +4,7 @@ import Toybox.WatchUi;
 import Toybox.Position;
 
 class swisspublictransportApp extends Application.AppBase {
-    enum AppState {
+  enum AppState {
     GET_LOCATION,
     GET_STOPS,
     GET_DEPARTURES,
@@ -16,7 +16,7 @@ class swisspublictransportApp extends Application.AppBase {
   var timer;
   var loading = false;
 
-    var heading as Float?;
+  var heading as Float?;
   var position as Position.Location?;
   var appState as AppState = GET_LOCATION;
   var stops = ({}) as Dictionary<Number, Stop>;
@@ -26,16 +26,15 @@ class swisspublictransportApp extends Application.AppBase {
   var departureGroups =
     ({}) as Dictionary<Number, Dictionary<Number, Departure> >;
   var groupRef = ({}) as Dictionary<String, Number>;
-    
-    function initialize() {
-        AppBase.initialize();
-    }
 
-    // onStart() is called on application start up
-    (:glance)
-    function onStart(state as Dictionary?) as Void {
-        System.println("App active");
-        if (stops.size() == 0) {
+  function initialize() {
+    AppBase.initialize();
+  }
+
+  // onStart() is called on application start up
+  function onStart(state as Dictionary?) as Void {
+    System.println("App active");
+    if (stops.size() == 0) {
       appState = GET_LOCATION;
     } else if (departures.size() == 0) {
       appState = GET_DEPARTURES;
@@ -47,13 +46,12 @@ class swisspublictransportApp extends Application.AppBase {
       method(:onPosition)
     );
     onPosition(Position.getInfo());
-    }
+  }
 
-    // onStop() is called when your application is exiting
-    (:glance)
-    function onStop(state as Dictionary?) as Void {
-        System.println("App inactive");
-        loading = false;
+  // onStop() is called when your application is exiting
+  function onStop(state as Dictionary?) as Void {
+    System.println("App inactive");
+    loading = false;
     Position.enableLocationEvents(
       Position.LOCATION_DISABLE,
       method(:onPosition)
@@ -62,31 +60,20 @@ class swisspublictransportApp extends Application.AppBase {
       timer.stop();
       timer = null;
     }
-    }
+  }
 
-    // Return the initial view of your application here
-    function getInitialView() as [Views] or [Views, InputDelegates] {
-        view = new swisspublictransportView();
-        var delegate = new NavDelegate(view);
-        return [ view, delegate ];
-    }
+  // Return the initial view of your application here
+  function getInitialView() as [Views] or [Views, InputDelegates] {
+    view = new swisspublictransportView();
+    var delegate = new NavDelegate(view);
+    return [view, delegate];
+  }
 
-    (:glance)
-    function getGlanceView() as [GlanceView] or [GlanceView, GlanceViewDelegate] or Null {
-        view = new glanceView();
-        return [ view ];
-    }
+  function onActive(state) as Void {}
 
-    function onActive(state) as Void {
-        
-    }
+  function onInactive(state) as Void {}
 
-    function onInactive(state) as Void {
-        
-    }
-
-    (:glance)
-    function onTimer() as Void {
+  function onTimer() as Void {
     if (currentStop == null) {
       return;
     }
@@ -98,8 +85,7 @@ class swisspublictransportApp extends Application.AppBase {
     );
   }
 
-    (:glance)
-    function onDepartures(responseCode as Number, data as Dictionary?) as Void {
+  function onDepartures(responseCode as Number, data as Dictionary?) as Void {
     loading = false;
     if (responseCode != 200) {
       System.println("Error getting departures");
@@ -107,81 +93,80 @@ class swisspublictransportApp extends Application.AppBase {
     }
     departures = Formatter.getDeparturesFromData(data);
 
-if(view != null && view.type == "main") {
-    if (departureGroups.size() > 0) {
-      for (var i = 0; i < departureGroups.size(); i++) {
-        departureGroups[i] = {};
+    if (view != null) {
+      if (departureGroups.size() > 0) {
+        for (var i = 0; i < departureGroups.size(); i++) {
+          departureGroups[i] = {};
+        }
       }
-    }
-    for (var i = 0; i < departures.size(); i++) {
-      var departure = departures.get(i) as Departure;
-      if (departure.cancelled || departure.deviation) {
-        continue;
-      }
-      var index =
-        groupRef.get(
+      for (var i = 0; i < departures.size(); i++) {
+        var departure = departures.get(i) as Departure;
+        if (departure.cancelled || departure.deviation) {
+          continue;
+        }
+        var index = groupRef.get(
           departure.lineName +
             departure.destinationName +
             departure.platformName
         );
-      if (index == null) {
-        index = departureGroups.size();
-        groupRef[
-          departure.lineName +
-            departure.destinationName +
-            departure.platformName
-         ] = index;
-        departureGroups[index] = {};
+        if (index == null) {
+          index = departureGroups.size();
+          groupRef[
+            departure.lineName +
+              departure.destinationName +
+              departure.platformName
+          ] = index;
+          departureGroups[index] = {};
+        }
+        departureGroups[index].put(departure.order, departure);
       }
-      departureGroups[index].put(departure.order, departure);
-    }
-    for (var i = 0; i < departureGroups.size(); i++) {
-      if (departureGroups.get(i).size() == 0) {
-        groupRef.remove(groupRef.keys()[groupRef.values().indexOf(i)]);
-        departureGroups.remove(i);
-        if (view.verticalScrollBar != null) {
-          if (i < view.verticalScrollBar.position) {
-            view.verticalScrollBar.position--;
+      for (var i = 0; i < departureGroups.size(); i++) {
+        if (departureGroups.get(i).size() == 0) {
+          groupRef.remove(groupRef.keys()[groupRef.values().indexOf(i)]);
+          departureGroups.remove(i);
+          if (view.verticalScrollBar != null) {
+            if (i < view.verticalScrollBar.position) {
+              view.verticalScrollBar.position--;
+            }
           }
         }
       }
-    }
-    var pos = 0;
-    while (pos < departureGroups.size()) {
-      var el = departureGroups.get(pos);
-      if (el == null) {
-        var nextIndex = pos + 1;
-        while (departureGroups.get(nextIndex) == null) {
-          nextIndex++;
+      var pos = 0;
+      while (pos < departureGroups.size()) {
+        var el = departureGroups.get(pos);
+        if (el == null) {
+          var nextIndex = pos + 1;
+          while (departureGroups.get(nextIndex) == null) {
+            nextIndex++;
+          }
+          departureGroups[pos] = departureGroups.get(nextIndex);
+          groupRef[groupRef.keys()[groupRef.values().indexOf(nextIndex)]] = pos;
+          departureGroups.remove(nextIndex);
         }
-        departureGroups[pos] = departureGroups.get(nextIndex);
-        groupRef[groupRef.keys()[groupRef.values().indexOf(nextIndex)]] = pos;
-        departureGroups.remove(nextIndex);
+        pos++;
       }
-      pos++;
+
+      if (departureGroups.size() > 2) {
+        var currentPosition = 0;
+        if (view.verticalScrollBar != null) {
+          currentPosition = view.verticalScrollBar.position;
+        }
+
+        if (currentPosition > departureGroups.size() - 2) {
+          currentPosition = departureGroups.size() - 2;
+        }
+        if (currentPosition < 0) {
+          currentPosition = 0;
+        }
+
+        view.verticalScrollBar = new VerticalScrollBar({
+          :length => departureGroups.size() - 1,
+          :position => currentPosition,
+        });
+      } else {
+        view.verticalScrollBar = null;
+      }
     }
-
-    if (departureGroups.size() > 2) {
-      var currentPosition = 0;
-      if (view.verticalScrollBar != null) {
-        currentPosition = view.verticalScrollBar.position;
-      }
-
-      if (currentPosition > departureGroups.size() - 2) {
-        currentPosition = departureGroups.size() - 2;
-      }
-      if (currentPosition < 0) {
-        currentPosition = 0;
-      }
-
-      view.verticalScrollBar = new VerticalScrollBar({
-        :length => departureGroups.size() - 1,
-        :position => currentPosition,
-      });
-    } else {
-      view.verticalScrollBar = null;
-    }
-}
 
     if (appState == GET_DEPARTURES) {
       appState = DISPLAY;
@@ -190,14 +175,13 @@ if(view != null && view.type == "main") {
         timer.start(self.method(:onTimer), 15000, true);
       }
     }
-    if(view != null) {
-        view.requestUpdate();
+    if (view != null) {
+      view.requestUpdate();
     }
 
     System.println("got departures");
   }
 
-    (:glance)
   function onStops(responseCode as Number, data as Dictionary?) as Void {
     loading = false;
     if (responseCode != 200) {
@@ -229,27 +213,24 @@ if(view != null && view.type == "main") {
       appState = GET_DEPARTURES;
     }
 
-if(view != null) {
-    if(view.type == "main") {
-    if (stops.size() > 1) {
-      view.horizontalScrollBar = new HorizontalScrollBar({
-        :length => stops.size(),
-        :position => currentStop,
-      });
-    } else {
-      view.horizontalScrollBar = null;
-    }
-    }
+    if (view != null) {
+      if (stops.size() > 1) {
+        view.horizontalScrollBar = new HorizontalScrollBar({
+          :length => stops.size(),
+          :position => currentStop,
+        });
+      } else {
+        view.horizontalScrollBar = null;
+      }
 
-    view.requestUpdate();
-}
+      view.requestUpdate();
+    }
 
     System.println("got stops");
 
     onTimer();
   }
 
-    (:glance)
   function onPosition(info as Position.Info) as Void {
     System.println("updated position");
     position = info.position;
@@ -259,8 +240,8 @@ if(view != null) {
     }
     if (appState == GET_LOCATION) {
       appState = GET_STOPS;
-      if(view != null) {
-      view.requestUpdate();
+      if (view != null) {
+        view.requestUpdate();
       }
     }
     loading = true;
@@ -272,7 +253,6 @@ if(view != null) {
   }
 }
 
-(:glance)
 function getApp() as swisspublictransportApp {
-    return Application.getApp() as swisspublictransportApp;
+  return Application.getApp() as swisspublictransportApp;
 }

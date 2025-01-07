@@ -1,7 +1,6 @@
 import Toybox.Lang;
 import Toybox.Time;
 
-(:glance)
 class Departure {
   public var tripRef as String;
   public var order as Number;
