@@ -79,7 +79,7 @@ class swisspublictransportApp extends Application.AppBase {
     }
     loading = true;
     JsonTransaction.makeRequest(
-      "/stops/" + stops[currentStop].ref + "/departures",
+      "/stops/" + stops.get(currentStop).ref + "/departures",
       null,
       method(:onDepartures)
     );
