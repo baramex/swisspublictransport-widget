@@ -208,7 +208,7 @@ class swisspublictransportApp extends Application.AppBase {
     if (oldStopRef != null) {
       var found = false;
       for (var i = 0; i < stops.size(); i++) {
-        if (stops.get(i).ref == oldStopRef) {
+        if (stops.get(i).ref == oldStopRef.ref) {
           currentStop = i;
           found = true;
           break;
