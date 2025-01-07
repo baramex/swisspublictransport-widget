@@ -32,6 +32,7 @@ class swisspublictransportApp extends Application.AppBase {
     }
 
     // onStart() is called on application start up
+    (:glance)
     function onStart(state as Dictionary?) as Void {
         System.println("App active");
         if (stops.size() == 0) {
@@ -49,6 +50,7 @@ class swisspublictransportApp extends Application.AppBase {
     }
 
     // onStop() is called when your application is exiting
+    (:glance)
     function onStop(state as Dictionary?) as Void {
         System.println("App inactive");
         loading = false;
@@ -69,11 +71,11 @@ class swisspublictransportApp extends Application.AppBase {
         return [ view, delegate ];
     }
 
-    /*(:glance)
+    (:glance)
     function getGlanceView() as [GlanceView] or [GlanceView, GlanceViewDelegate] or Null {
-        // delegates: other stops
-        return [ new glanceView() ];
-    }*/
+        view = new glanceView();
+        return [ view ];
+    }
 
     function onActive(state) as Void {
         
@@ -83,6 +85,7 @@ class swisspublictransportApp extends Application.AppBase {
         
     }
 
+    (:glance)
     function onTimer() as Void {
     if (currentStop == null) {
       return;
@@ -95,6 +98,7 @@ class swisspublictransportApp extends Application.AppBase {
     );
   }
 
+    (:glance)
     function onDepartures(responseCode as Number, data as Dictionary?) as Void {
     loading = false;
     if (responseCode != 200) {
@@ -103,35 +107,36 @@ class swisspublictransportApp extends Application.AppBase {
     }
     departures = Formatter.getDeparturesFromData(data);
 
+if(view != null && view.type == "main") {
     if (departureGroups.size() > 0) {
       for (var i = 0; i < departureGroups.size(); i++) {
         departureGroups[i] = {};
       }
     }
     for (var i = 0; i < departures.size(); i++) {
-      var departure = departures[i];
+      var departure = departures.get(i) as Departure;
       if (departure.cancelled || departure.deviation) {
         continue;
       }
       var index =
-        groupRef[
+        groupRef.get(
           departure.lineName +
             departure.destinationName +
             departure.platformName
-        ];
+        );
       if (index == null) {
         index = departureGroups.size();
         groupRef[
           departure.lineName +
             departure.destinationName +
             departure.platformName
-        ] = index;
+         ] = index;
         departureGroups[index] = {};
       }
       departureGroups[index].put(departure.order, departure);
     }
     for (var i = 0; i < departureGroups.size(); i++) {
-      if (departureGroups[i].size() == 0) {
+      if (departureGroups.get(i).size() == 0) {
         groupRef.remove(groupRef.keys()[groupRef.values().indexOf(i)]);
         departureGroups.remove(i);
         if (view.verticalScrollBar != null) {
@@ -143,13 +148,13 @@ class swisspublictransportApp extends Application.AppBase {
     }
     var pos = 0;
     while (pos < departureGroups.size()) {
-      var el = departureGroups[pos];
+      var el = departureGroups.get(pos);
       if (el == null) {
         var nextIndex = pos + 1;
-        while (departureGroups[nextIndex] == null) {
+        while (departureGroups.get(nextIndex) == null) {
           nextIndex++;
         }
-        departureGroups[pos] = departureGroups[nextIndex];
+        departureGroups[pos] = departureGroups.get(nextIndex);
         groupRef[groupRef.keys()[groupRef.values().indexOf(nextIndex)]] = pos;
         departureGroups.remove(nextIndex);
       }
@@ -158,7 +163,7 @@ class swisspublictransportApp extends Application.AppBase {
 
     if (departureGroups.size() > 2) {
       var currentPosition = 0;
-      if (view != null && view.verticalScrollBar != null) {
+      if (view.verticalScrollBar != null) {
         currentPosition = view.verticalScrollBar.position;
       }
 
@@ -169,15 +174,14 @@ class swisspublictransportApp extends Application.AppBase {
         currentPosition = 0;
       }
 
-        if(view != null) {
       view.verticalScrollBar = new VerticalScrollBar({
         :length => departureGroups.size() - 1,
         :position => currentPosition,
       });
-        }
-    } else if(view != null) {
+    } else {
       view.verticalScrollBar = null;
     }
+}
 
     if (appState == GET_DEPARTURES) {
       appState = DISPLAY;
@@ -187,12 +191,13 @@ class swisspublictransportApp extends Application.AppBase {
       }
     }
     if(view != null) {
-    view.requestUpdate();
+        view.requestUpdate();
     }
 
     System.println("got departures");
   }
 
+    (:glance)
   function onStops(responseCode as Number, data as Dictionary?) as Void {
     loading = false;
     if (responseCode != 200) {
@@ -201,13 +206,13 @@ class swisspublictransportApp extends Application.AppBase {
     }
     var oldStopRef = null;
     if (currentStop != null) {
-      oldStopRef = stops[currentStop];
+      oldStopRef = stops.get(currentStop);
     }
     stops = Formatter.getStopsFromData(data);
     if (oldStopRef != null) {
       var found = false;
       for (var i = 0; i < stops.size(); i++) {
-        if (stops[i].ref == oldStopRef) {
+        if (stops.get(i).ref == oldStopRef) {
           currentStop = i;
           found = true;
           break;
@@ -225,6 +230,7 @@ class swisspublictransportApp extends Application.AppBase {
     }
 
 if(view != null) {
+    if(view.type == "main") {
     if (stops.size() > 1) {
       view.horizontalScrollBar = new HorizontalScrollBar({
         :length => stops.size(),
@@ -232,6 +238,7 @@ if(view != null) {
       });
     } else {
       view.horizontalScrollBar = null;
+    }
     }
 
     view.requestUpdate();
@@ -242,11 +249,12 @@ if(view != null) {
     onTimer();
   }
 
+    (:glance)
   function onPosition(info as Position.Info) as Void {
     System.println("updated position");
     position = info.position;
     heading = info.heading;
-    if (position == null) {
+    if (position == null || position.toDegrees().size() < 2) {
       return;
     }
     if (appState == GET_LOCATION) {
@@ -264,6 +272,7 @@ if(view != null) {
   }
 }
 
+(:glance)
 function getApp() as swisspublictransportApp {
     return Application.getApp() as swisspublictransportApp;
 }

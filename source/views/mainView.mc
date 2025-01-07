@@ -5,6 +5,8 @@ import Toybox.Position;
 import Toybox.Math;
 
 class swisspublictransportView extends WatchUi.View {
+    var type = "main";
+
   var stateText;
   var distanceText;
 
