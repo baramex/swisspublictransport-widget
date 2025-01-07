@@ -2,6 +2,7 @@ import Toybox.Application;
 import Toybox.Lang;
 import Toybox.WatchUi;
 import Toybox.Position;
+import Toybox.Time;
 
 class swisspublictransportApp extends Application.AppBase {
   enum AppState {
@@ -14,7 +15,6 @@ class swisspublictransportApp extends Application.AppBase {
   var view;
 
   var timer;
-  var loading = false;
 
   var heading as Float?;
   var position as Position.Location?;
@@ -22,6 +22,9 @@ class swisspublictransportApp extends Application.AppBase {
   var stops = ({}) as Dictionary<Number, Stop>;
   var departures = ({}) as Dictionary<Number, Departure>;
   var currentStop as Number?;
+
+  var lastStopsRequest as Time.Moment?;
+  var lastDeparturesRequest as Time.Moment?;
 
   var departureGroups =
     ({}) as Dictionary<Number, Dictionary<Number, Departure> >;
@@ -45,13 +48,11 @@ class swisspublictransportApp extends Application.AppBase {
       Position.LOCATION_CONTINUOUS,
       method(:onPosition)
     );
-    onPosition(Position.getInfo());
   }
 
   // onStop() is called when your application is exiting
   function onStop(state as Dictionary?) as Void {
     System.println("App inactive");
-    loading = false;
     Position.enableLocationEvents(
       Position.LOCATION_DISABLE,
       method(:onPosition)
@@ -74,19 +75,28 @@ class swisspublictransportApp extends Application.AppBase {
   function onInactive(state) as Void {}
 
   function onTimer() as Void {
+    updateDepartures(false);
+  }
+
+  function updateDepartures(force as Boolean?) {
     if (currentStop == null) {
       return;
     }
-    loading = true;
-    JsonTransaction.makeRequest(
-      "/stops/" + stops.get(currentStop).ref + "/departures",
-      null,
-      method(:onDepartures)
-    );
+    if (
+      lastDeparturesRequest == null ||
+      Time.now().subtract(lastDeparturesRequest).value() > 10 ||
+      force == true
+    ) {
+      lastDeparturesRequest = Time.now();
+      JsonTransaction.makeRequest(
+        "/stops/" + stops.get(currentStop).ref + "/departures",
+        null,
+        method(:onDepartures)
+      );
+    }
   }
 
   function onDepartures(responseCode as Number, data as Dictionary?) as Void {
-    loading = false;
     if (responseCode != 200) {
       System.println("Error getting departures");
       return;
@@ -183,7 +193,6 @@ class swisspublictransportApp extends Application.AppBase {
   }
 
   function onStops(responseCode as Number, data as Dictionary?) as Void {
-    loading = false;
     if (responseCode != 200) {
       System.println("Error getting stops");
       return;
@@ -204,13 +213,18 @@ class swisspublictransportApp extends Application.AppBase {
       }
       if (!found) {
         currentStop = null;
+        departures = {};
+        departureGroups = {};
+        groupRef = {};
       }
     }
     if (currentStop == null && stops.size() > 0) {
       currentStop = 0;
+      updateDepartures(true);
     }
     if (appState == GET_STOPS) {
       appState = GET_DEPARTURES;
+      updateDepartures(true);
     }
 
     if (view != null) {
@@ -227,8 +241,6 @@ class swisspublictransportApp extends Application.AppBase {
     }
 
     System.println("got stops");
-
-    onTimer();
   }
 
   function onPosition(info as Position.Info) as Void {
@@ -244,12 +256,17 @@ class swisspublictransportApp extends Application.AppBase {
         view.requestUpdate();
       }
     }
-    loading = true;
-    JsonTransaction.makeRequest(
-      "/stops/nearby",
-      { "lat" => position.toDegrees()[0], "lon" => position.toDegrees()[1] },
-      method(:onStops)
-    );
+    if (
+      lastStopsRequest == null ||
+      Time.now().subtract(lastStopsRequest).value() > 10
+    ) {
+      lastStopsRequest = Time.now();
+      JsonTransaction.makeRequest(
+        "/stops/nearby",
+        { "lat" => position.toDegrees()[0], "lon" => position.toDegrees()[1] },
+        method(:onStops)
+      );
+    }
   }
 }
 

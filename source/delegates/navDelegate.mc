@@ -1,4 +1,5 @@
 import Toybox.WatchUi;
+import Toybox.Communications;
 
 class NavDelegate extends WatchUi.BehaviorDelegate {
   var view;
@@ -34,10 +35,8 @@ class NavDelegate extends WatchUi.BehaviorDelegate {
   }
 
   function onSelect() {
-    if (getApp().loading) {
-      return false;
-    }
     if (view.horizontalScrollBar != null) {
+      Communications.cancelAllRequests();
       view.horizontalScrollBar.position++;
       if (
         view.horizontalScrollBar.position >= view.horizontalScrollBar.length
