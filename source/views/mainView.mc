@@ -5,7 +5,7 @@ import Toybox.Position;
 import Toybox.Math;
 
 class swisspublictransportView extends WatchUi.View {
-    var type = "main";
+  var type = "main";
 
   var stateText;
   var distanceText;
@@ -120,7 +120,8 @@ class swisspublictransportView extends WatchUi.View {
       if (app.heading == null) {
         app.heading = 0.0;
       }
-      var angle = PositionUtils.getAngle(app.position, stopLocation) + app.heading;
+      var angle =
+        PositionUtils.getAngle(app.position, stopLocation) + app.heading;
 
       var x1 = 140 + 20 * Math.cos(angle);
       var y1 = 20 + 12 * Math.sin(angle);
@@ -181,20 +182,19 @@ class swisspublictransportView extends WatchUi.View {
 
   function updateCurrentStop() {
     var app = getApp();
-        if (
-            app.currentStop != null &&
-            horizontalScrollBar != null &&
-            app.currentStop != horizontalScrollBar.position
-            ) {
-            app.currentStop = horizontalScrollBar.position;
-            app.appState = app.GET_DEPARTURES;
-            app.departureGroups = {};
-            app.groupRef = {};
-            app.departures = {};
-            app.appState = app.GET_DEPARTURES;
-            app.updateDepartures(true);
-        }
+    if (
+      app.currentStop != null &&
+      horizontalScrollBar != null &&
+      app.currentStop != horizontalScrollBar.position
+    ) {
+      app.currentStop = horizontalScrollBar.position;
+      app.departureGroups = {};
+      app.groupRef = {};
+      app.departures = {};
+      app.appState = app.GET_DEPARTURES;
+      app.updateDepartures(true);
     }
+  }
 
   // Called when this View is brought to the foreground. Restore
   // the state of this View and prepare it to be shown. This includes
@@ -219,7 +219,5 @@ class swisspublictransportView extends WatchUi.View {
   // Called when this View is removed from the screen. Save the
   // state of this View here. This includes freeing resources from
   // memory.
-  function onHide() as Void {
-    
-  }
+  function onHide() as Void {}
 }

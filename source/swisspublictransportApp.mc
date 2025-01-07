@@ -94,6 +94,8 @@ class swisspublictransportApp extends Application.AppBase {
         null,
         method(:onDepartures)
       );
+    } else if(view != null) {
+      view.requestUpdate();
     }
   }
 
@@ -221,8 +223,8 @@ class swisspublictransportApp extends Application.AppBase {
     }
     if (currentStop == null && stops.size() > 0) {
       currentStop = 0;
-      updateDepartures(true);
       appState = GET_DEPARTURES;
+      updateDepartures(true);
     }
     if (appState == GET_STOPS) {
       appState = GET_DEPARTURES;
@@ -268,6 +270,8 @@ class swisspublictransportApp extends Application.AppBase {
         { "lat" => position.toDegrees()[0], "lon" => position.toDegrees()[1] },
         method(:onStops)
       );
+    } else if(view != null) {
+      view.requestUpdate();
     }
   }
 }
