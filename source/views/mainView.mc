@@ -5,37 +5,14 @@ import Toybox.Position;
 import Toybox.Math;
 
 class swisspublictransportView extends WatchUi.View {
-  enum AppState {
-    GET_LOCATION,
-    GET_STOPS,
-    GET_DEPARTURES,
-    DISPLAY,
-  }
-
-  var heading as Float?;
-  var position as Position.Location?;
-  var appState as AppState = GET_LOCATION;
-  var currentStop as Number?;
-  var stops = ({}) as Dictionary<Number, Stop>;
-  var departures = ({}) as Dictionary<Number, Departure>;
-
-  var departureGroups =
-    ({}) as Dictionary<Number, Dictionary<Number, Departure> >;
-  var groupRef = ({}) as Dictionary<String, Number>;
+  var stateText;
+  var distanceText;
 
   var verticalScrollBar;
   var horizontalScrollBar;
 
-  var stateText;
-  var progressBar;
-  var distanceText;
-
-  var timer;
-  var loading = false;
-
   function initialize() {
     View.initialize();
-    // create layers
   }
 
   // Load your resources here
@@ -47,35 +24,24 @@ class swisspublictransportView extends WatchUi.View {
   // Update the view
   function onUpdate(dc as Dc) as Void {
     System.println("update");
+    var app = getApp();
+
     View.onUpdate(dc);
     dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
     dc.clear();
 
-    if (
-      currentStop != null &&
-      horizontalScrollBar != null &&
-      currentStop != horizontalScrollBar.position
-    ) {
-      currentStop = horizontalScrollBar.position;
-      appState = GET_DEPARTURES;
-      departureGroups = {};
-      groupRef = {};
-      departures = {};
-      onTimer();
-    }
-
-    if (appState == GET_LOCATION) {
+    if (app.appState == app.GET_LOCATION) {
       stateText.setText("Récupération de la position...");
-    } else if (appState == GET_STOPS) {
+    } else if (app.appState == app.GET_STOPS) {
       stateText.setText("Récupération des arrêts...");
-    } else if (appState == GET_DEPARTURES) {
+    } else if (app.appState == app.GET_DEPARTURES) {
       stateText.setText("Récupération des départs...");
-    } else if (appState == DISPLAY) {
+    } else if (app.appState == app.DISPLAY) {
       stateText.setText("");
     }
 
-    if (currentStop != null && stops.hasKey(currentStop)) {
-      var stop = stops.get(currentStop);
+    if (app.currentStop != null && app.stops.hasKey(app.currentStop)) {
+      var stop = app.stops.get(app.currentStop);
       var stopText = stop.name;
       var stopLocation = new Position.Location({
         :latitude => stop.lat,
@@ -145,14 +111,14 @@ class swisspublictransportView extends WatchUi.View {
       dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
       dc.fillCircle(144, 31, 32);
 
-      var distance = PositionUtils.getDistance(position, stopLocation);
+      var distance = PositionUtils.getDistance(app.position, stopLocation);
       distanceText.setText(Math.round(distance).toNumber() + "m");
       distanceText.draw(dc);
 
-      if (heading == null) {
-        heading = 0.0;
+      if (app.heading == null) {
+        app.heading = 0.0;
       }
-      var angle = PositionUtils.getAngle(position, stopLocation) + heading;
+      var angle = PositionUtils.getAngle(app.position, stopLocation) + app.heading;
 
       var x1 = 140 + 20 * Math.cos(angle);
       var y1 = 20 + 12 * Math.sin(angle);
@@ -175,8 +141,8 @@ class swisspublictransportView extends WatchUi.View {
       }
     }
 
-    if (appState == DISPLAY) {
-      if (departures.size() < 1) {
+    if (app.appState == app.DISPLAY) {
+      if (app.departureGroups.size() < 1) {
         stateText.setText("Aucun départ trouvé");
       } else {
         var pos = 0;
@@ -184,10 +150,10 @@ class swisspublictransportView extends WatchUi.View {
           pos = verticalScrollBar.position;
         }
         for (var i = pos; i < pos + 2; i++) {
-          if (i >= departureGroups.size()) {
+          if (i >= app.departureGroups.size()) {
             break;
           }
-          var ldepartures = departureGroups.get(i);
+          var ldepartures = app.departureGroups.get(i);
           if (ldepartures.size() == 0) {
             continue;
           }
@@ -211,23 +177,26 @@ class swisspublictransportView extends WatchUi.View {
     stateText.draw(dc);
   }
 
+  function updateCurrentStop() {
+    var app = getApp();
+        if (
+            app.currentStop != null &&
+            horizontalScrollBar != null &&
+            app.currentStop != horizontalScrollBar.position
+            ) {
+            app.currentStop = horizontalScrollBar.position;
+            app.appState = app.GET_DEPARTURES;
+            app.departureGroups = {};
+            app.groupRef = {};
+            app.departures = {};
+            app.onTimer();
+        }
+    }
+
   // Called when this View is brought to the foreground. Restore
   // the state of this View and prepare it to be shown. This includes
   // loading resources into memory.
   function onShow() as Void {
-    if (stops.size() == 0) {
-      appState = GET_LOCATION;
-    } else if (departures.size() == 0) {
-      appState = GET_DEPARTURES;
-    } else {
-      appState = DISPLAY;
-    }
-    Position.enableLocationEvents(
-      Position.LOCATION_CONTINUOUS,
-      method(:onPosition)
-    );
-    onPosition(Position.getInfo());
-
     stateText = new WatchUi.TextArea({
       :locX => WatchUi.LAYOUT_HALIGN_CENTER,
       :locY => 75,
@@ -244,190 +213,10 @@ class swisspublictransportView extends WatchUi.View {
     });
   }
 
-  function onTimer() as Void {
-    if (currentStop == null) {
-      return;
-    }
-    loading = true;
-    JsonTransaction.makeRequest(
-      "/stops/" + stops[currentStop].ref + "/departures",
-      null,
-      method(:onDepartures)
-    );
-  }
-
   // Called when this View is removed from the screen. Save the
   // state of this View here. This includes freeing resources from
   // memory.
   function onHide() as Void {
-    loading = false;
-    Position.enableLocationEvents(
-      Position.LOCATION_DISABLE,
-      method(:onPosition)
-    );
-    if (timer) {
-      timer.stop();
-      timer = null;
-    }
-  }
-
-  function onDepartures(responseCode as Number, data as Dictionary?) as Void {
-    loading = false;
-    if (responseCode != 200) {
-      System.println("Error getting departures");
-      return;
-    }
-    departures = Formatter.getDeparturesFromData(data);
-
-    if (departureGroups.size() > 0) {
-      for (var i = 0; i < departureGroups.size(); i++) {
-        departureGroups[i] = {};
-      }
-    }
-    for (var i = 0; i < departures.size(); i++) {
-      var departure = departures[i];
-      if (departure.cancelled || departure.deviation) {
-        continue;
-      }
-      var index =
-        groupRef[
-          departure.lineName +
-            departure.destinationName +
-            departure.platformName
-        ];
-      if (index == null) {
-        index = departureGroups.size();
-        groupRef[
-          departure.lineName +
-            departure.destinationName +
-            departure.platformName
-        ] = index;
-        departureGroups[index] = {};
-      }
-      departureGroups[index].put(departure.order, departure);
-    }
-    for (var i = 0; i < departureGroups.size(); i++) {
-      if (departureGroups[i].size() == 0) {
-        groupRef.remove(groupRef.keys()[groupRef.values().indexOf(i)]);
-        departureGroups.remove(i);
-        if (verticalScrollBar != null) {
-          if (i < verticalScrollBar.position) {
-            verticalScrollBar.position--;
-          }
-        }
-      }
-    }
-    var pos = 0;
-    while (pos < departureGroups.size()) {
-      var el = departureGroups[pos];
-      if (el == null) {
-        var nextIndex = pos + 1;
-        while (departureGroups[nextIndex] == null) {
-          nextIndex++;
-        }
-        departureGroups[pos] = departureGroups[nextIndex];
-        groupRef[groupRef.keys()[groupRef.values().indexOf(nextIndex)]] = pos;
-        departureGroups.remove(nextIndex);
-      }
-      pos++;
-    }
-
-    if (departureGroups.size() > 2) {
-      var currentPosition = 0;
-      if (verticalScrollBar != null) {
-        currentPosition = verticalScrollBar.position;
-      }
-
-      if (currentPosition > departureGroups.size() - 2) {
-        currentPosition = departureGroups.size() - 2;
-      }
-      if (currentPosition < 0) {
-        currentPosition = 0;
-      }
-
-      verticalScrollBar = new VerticalScrollBar({
-        :length => departureGroups.size() - 1,
-        :position => currentPosition,
-      });
-    } else {
-      verticalScrollBar = null;
-    }
-
-    if (appState == GET_DEPARTURES) {
-      appState = DISPLAY;
-      if (timer == null) {
-        timer = new Timer.Timer();
-        timer.start(self.method(:onTimer), 15000, true);
-      }
-    }
-    requestUpdate();
-
-    System.println("got departures");
-  }
-
-  function onStops(responseCode as Number, data as Dictionary?) as Void {
-    loading = false;
-    if (responseCode != 200) {
-      System.println("Error getting stops");
-      return;
-    }
-    var oldStopRef = null;
-    if (currentStop != null) {
-      oldStopRef = stops[currentStop];
-    }
-    stops = Formatter.getStopsFromData(data);
-    if (oldStopRef != null) {
-      var found = false;
-      for (var i = 0; i < stops.size(); i++) {
-        if (stops[i].ref == oldStopRef) {
-          currentStop = i;
-          found = true;
-          break;
-        }
-      }
-      if (!found) {
-        currentStop = null;
-      }
-    }
-    if (currentStop == null && stops.size() > 0) {
-      currentStop = 0;
-    }
-    if (appState == GET_STOPS) {
-      appState = GET_DEPARTURES;
-    }
-
-    if (stops.size() > 1) {
-      horizontalScrollBar = new HorizontalScrollBar({
-        :length => stops.size(),
-        :position => currentStop,
-      });
-    } else {
-      horizontalScrollBar = null;
-    }
-
-    requestUpdate();
-
-    System.println("got stops");
-
-    onTimer();
-  }
-
-  function onPosition(info as Position.Info) as Void {
-    System.println("updated position");
-    position = info.position;
-    heading = info.heading;
-    if (position == null) {
-      return;
-    }
-    if (appState == GET_LOCATION) {
-      appState = GET_STOPS;
-      requestUpdate();
-    }
-    loading = true;
-    JsonTransaction.makeRequest(
-      "/stops/nearby",
-      { "lat" => position.toDegrees()[0], "lon" => position.toDegrees()[1] },
-      method(:onStops)
-    );
+    
   }
 }

@@ -12,7 +12,6 @@ class glanceView extends WatchUi.GlanceView {
     }
 
     function onUpdate(dc) {
-        // Call the parent onUpdate function to redraw the layout
         GlanceView.onUpdate(dc);
     }
 

@@ -44,6 +44,7 @@ class NavDelegate extends WatchUi.BehaviorDelegate {
       ) {
         view.horizontalScrollBar.position = 0;
       }
+      view.updateCurrentStop();
       view.requestUpdate();
       return true;
     }
