@@ -3,6 +3,7 @@ import Toybox.WatchUi;
 import Toybox.Lang;
 import Toybox.Position;
 import Toybox.Math;
+import Toybox.Sensor;
 
 class swisspublictransportView extends WatchUi.View {
   var type = "main";
@@ -12,6 +13,8 @@ class swisspublictransportView extends WatchUi.View {
 
   var verticalScrollBar;
   var horizontalScrollBar;
+
+  var azimuth as Float?;
 
   function initialize() {
     View.initialize();
@@ -117,11 +120,10 @@ class swisspublictransportView extends WatchUi.View {
       distanceText.setText(Math.round(distance).toNumber() + "m");
       distanceText.draw(dc);
 
-      if (app.heading == null) {
-        app.heading = 0.0;
+      if (azimuth == null) {
+        azimuth = 0.0;
       }
-      var angle =
-        PositionUtils.getAngle(app.position, stopLocation) + app.heading;
+      var angle = PositionUtils.getAngle(app.position, stopLocation) + azimuth;
 
       var x1 = 140 + 20 * Math.cos(angle);
       var y1 = 20 + 12 * Math.sin(angle);
@@ -196,6 +198,17 @@ class swisspublictransportView extends WatchUi.View {
     }
   }
 
+  function onMag(sensorData as SensorData) as Void {
+    if (sensorData.magnetometerData == null) {
+      return;
+    }
+    azimuth = Math.atan2(
+      sensorData.magnetometerData.y[0],
+      sensorData.magnetometerData.x[0]
+    );
+    requestUpdate();
+  }
+
   // Called when this View is brought to the foreground. Restore
   // the state of this View and prepare it to be shown. This includes
   // loading resources into memory.
@@ -214,10 +227,20 @@ class swisspublictransportView extends WatchUi.View {
       :justification => Graphics.TEXT_JUSTIFY_CENTER,
       :color => Graphics.COLOR_BLACK,
     });
+
+    Sensor.registerSensorDataListener(method(:onMag), {
+      :period => 1,
+      :magnetometer => {
+        :enabled => true,
+        :sampleRate => 1,
+      },
+    });
   }
 
   // Called when this View is removed from the screen. Save the
   // state of this View here. This includes freeing resources from
   // memory.
-  function onHide() as Void {}
+  function onHide() as Void {
+    Sensor.unregisterSensorDataListener();
+  }
 }

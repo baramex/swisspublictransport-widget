@@ -16,7 +16,6 @@ class swisspublictransportApp extends Application.AppBase {
 
   var timer;
 
-  var heading as Float?;
   var position as Position.Location?;
   var appState as AppState = GET_LOCATION;
   var stops = ({}) as Dictionary<Number, Stop>;
@@ -250,7 +249,6 @@ class swisspublictransportApp extends Application.AppBase {
   function onPosition(info as Position.Info) as Void {
     System.println("updated position");
     position = info.position;
-    heading = info.heading;
     if (position == null || position.toDegrees().size() < 2) {
       return;
     }
