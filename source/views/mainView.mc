@@ -123,7 +123,7 @@ class swisspublictransportView extends WatchUi.View {
       if (azimuth == null) {
         azimuth = 0.0;
       }
-      var angle = PositionUtils.getAngle(app.position, stopLocation) + azimuth;
+      var angle = PositionUtils.getAngle(app.position, stopLocation) - azimuth;
 
       var x1 = 140 + 20 * Math.cos(angle);
       var y1 = 20 + 12 * Math.sin(angle);
@@ -202,10 +202,11 @@ class swisspublictransportView extends WatchUi.View {
     if (sensorData.magnetometerData == null) {
       return;
     }
-    azimuth = Math.atan2(
-      sensorData.magnetometerData.y[0],
-      sensorData.magnetometerData.x[0]
-    );
+    azimuth =
+      Math.atan2(
+        sensorData.magnetometerData.y[0],
+        sensorData.magnetometerData.x[0]
+      ) + Math.PI;
     requestUpdate();
   }
 
@@ -232,7 +233,7 @@ class swisspublictransportView extends WatchUi.View {
       :period => 1,
       :magnetometer => {
         :enabled => true,
-        :sampleRate => 1,
+        :sampleRate => 4,
       },
     });
   }
