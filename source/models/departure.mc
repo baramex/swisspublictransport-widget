@@ -2,7 +2,6 @@ import Toybox.Lang;
 import Toybox.Time;
 
 class Departure {
-  public var tripRef as String;
   public var order as Number;
   public var stopRef as Number;
   public var departureTime as Moment;
@@ -12,9 +11,10 @@ class Departure {
   public var cancelled as Boolean;
   public var unplanned as Boolean;
   public var deviation as Boolean;
+  public var lineColor as String;
+  public var lineTextColor as String;
 
   public function initialize(params as Dictionary) {
-    tripRef = params.get("tripRef") as String;
     order = params.get("order") as Number;
     stopRef = params.get("stopRef") as Number;
     departureTime = params.get("departureTime") as Time.Moment;
@@ -24,5 +24,7 @@ class Departure {
     cancelled = params.get("cancelled") as Boolean;
     unplanned = params.get("unplanned") as Boolean;
     deviation = params.get("deviation") as Boolean;
+    lineColor = params.get("lineColor") as String;
+    lineTextColor = params.get("lineTextColor") as String;
   }
 }
