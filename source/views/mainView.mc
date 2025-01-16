@@ -48,7 +48,7 @@ class swisspublictransportView extends WatchUi.View {
     if (app.stops != null && app.stops.size() == 0) {
       stateText.setText("Aucun arrêt trouvé");
     }
-    if (app.departures && app.departures.size() == 0) {
+    if (app.departures != null && app.departures.size() == 0) {
       stateText.setText("Aucun départ trouvé");
     }
 
@@ -197,7 +197,7 @@ class swisspublictransportView extends WatchUi.View {
       app.groupRef = {};
       app.departures = null;
       app.appState = app.GET_DEPARTURES;
-      app.verticalScrollBar = null;
+      verticalScrollBar = null;
       app.updateDepartures(true);
     }
   }
