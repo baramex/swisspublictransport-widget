@@ -18,8 +18,8 @@ class swisspublictransportApp extends Application.AppBase {
 
   var position as Position.Location?;
   var appState as AppState = GET_LOCATION;
-  var stops = ({}) as Dictionary<Number, Stop>;
-  var departures = ({}) as Dictionary<Number, Departure>;
+  var stops as Dictionary<Number, Stop>?;
+  var departures as Dictionary<Number, Departure>?;
   var currentStop as Number?;
 
   var lastStopsRequest as Time.Moment?;
@@ -36,13 +36,16 @@ class swisspublictransportApp extends Application.AppBase {
   // onStart() is called on application start up
   function onStart(state as Dictionary?) as Void {
     System.println("App active");
-    if (stops.size() == 0) {
+    if (position == null) {
       appState = GET_LOCATION;
-    } else if (departures.size() == 0) {
+    } else if (stops == null) {
+      appState = GET_STOPS;
+    } else if (departures == null) {
       appState = GET_DEPARTURES;
     } else {
       appState = DISPLAY;
     }
+
     Position.enableLocationEvents(
       Position.LOCATION_CONTINUOUS,
       method(:onPosition)
@@ -93,7 +96,7 @@ class swisspublictransportApp extends Application.AppBase {
         null,
         method(:onDepartures)
       );
-    } else if(view != null) {
+    } else if (view != null) {
       view.requestUpdate();
     }
   }
@@ -108,7 +111,7 @@ class swisspublictransportApp extends Application.AppBase {
     if (view != null) {
       if (departureGroups.size() > 0) {
         for (var i = 0; i < departureGroups.size(); i++) {
-          departureGroups[i] = {};
+          departureGroups.put(i, {});
         }
       }
       for (var i = 0; i < departures.size(); i++) {
@@ -123,14 +126,15 @@ class swisspublictransportApp extends Application.AppBase {
         );
         if (index == null) {
           index = departureGroups.size();
-          groupRef[
+          groupRef.put(
             departure.lineName +
               departure.destinationName +
-              departure.platformName
-          ] = index;
-          departureGroups[index] = {};
+              departure.platformName,
+            index
+          );
+          departureGroups.put(index, {});
         }
-        departureGroups[index].put(departure.order, departure);
+        departureGroups.get(index).put(departure.order, departure);
       }
       for (var i = 0; i < departureGroups.size(); i++) {
         if (departureGroups.get(i).size() == 0) {
@@ -151,8 +155,11 @@ class swisspublictransportApp extends Application.AppBase {
           while (departureGroups.get(nextIndex) == null) {
             nextIndex++;
           }
-          departureGroups[pos] = departureGroups.get(nextIndex);
-          groupRef[groupRef.keys()[groupRef.values().indexOf(nextIndex)]] = pos;
+          departureGroups.put(pos, departureGroups.get(nextIndex));
+          groupRef.put(
+            groupRef.keys()[groupRef.values().indexOf(nextIndex)],
+            pos
+          );
           departureGroups.remove(nextIndex);
         }
         pos++;
@@ -215,17 +222,13 @@ class swisspublictransportApp extends Application.AppBase {
       }
       if (!found) {
         currentStop = null;
-        departures = {};
+        departures = null;
         departureGroups = {};
         groupRef = {};
       }
     }
     if (currentStop == null && stops.size() > 0) {
       currentStop = 0;
-      appState = GET_DEPARTURES;
-      updateDepartures(true);
-    }
-    if (appState == GET_STOPS) {
       appState = GET_DEPARTURES;
       updateDepartures(true);
     }
@@ -268,7 +271,7 @@ class swisspublictransportApp extends Application.AppBase {
         { "lat" => position.toDegrees()[0], "lon" => position.toDegrees()[1] },
         method(:onStops)
       );
-    } else if(view != null) {
+    } else if (view != null) {
       view.requestUpdate();
     }
   }

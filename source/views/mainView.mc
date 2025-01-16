@@ -45,6 +45,13 @@ class swisspublictransportView extends WatchUi.View {
       stateText.setText("");
     }
 
+    if (app.stops != null && app.stops.size() == 0) {
+      stateText.setText("Aucun arrêt trouvé");
+    }
+    if (app.departures && app.departures.size() == 0) {
+      stateText.setText("Aucun départ trouvé");
+    }
+
     if (app.currentStop != null && app.stops.hasKey(app.currentStop)) {
       var stop = app.stops.get(app.currentStop);
       var stopText = stop.name;
@@ -146,36 +153,32 @@ class swisspublictransportView extends WatchUi.View {
       }
     }
 
-    if (app.appState == app.DISPLAY) {
-      if (app.departureGroups.size() < 1) {
-        stateText.setText("Aucun départ trouvé");
-      } else {
-        var pos = 0;
-        if (verticalScrollBar != null) {
-          pos = verticalScrollBar.position;
+    if (app.appState == app.DISPLAY && app.departureGroups.size() > 0) {
+      var pos = 0;
+      if (verticalScrollBar != null) {
+        pos = verticalScrollBar.position;
+      }
+      for (var i = pos; i < pos + 2; i++) {
+        if (i >= app.departureGroups.size()) {
+          break;
         }
-        for (var i = pos; i < pos + 2; i++) {
-          if (i >= app.departureGroups.size()) {
-            break;
-          }
-          var ldepartures = app.departureGroups.get(i);
-          if (ldepartures.size() == 0) {
-            continue;
-          }
-          var departureElement = new DepartureGroupElement({
-            :lineName => ldepartures.values()[0].lineName,
-            :platformName => ldepartures.values()[0].platformName,
-            :locX => 6,
-            :locY => 67 + (i - pos) * 52,
-            :departures => ldepartures,
-            :destinationName => ldepartures.values()[0].destinationName,
-          });
-          departureElement.draw(dc);
+        var ldepartures = app.departureGroups.get(i);
+        if (ldepartures.size() == 0) {
+          continue;
         }
+        var departureElement = new DepartureGroupElement({
+          :lineName => ldepartures.values()[0].lineName,
+          :platformName => ldepartures.values()[0].platformName,
+          :locX => 6,
+          :locY => 67 + (i - pos) * 52,
+          :departures => ldepartures,
+          :destinationName => ldepartures.values()[0].destinationName,
+        });
+        departureElement.draw(dc);
+      }
 
-        if (verticalScrollBar != null) {
-          verticalScrollBar.draw(dc);
-        }
+      if (verticalScrollBar != null) {
+        verticalScrollBar.draw(dc);
       }
     }
 
@@ -192,8 +195,9 @@ class swisspublictransportView extends WatchUi.View {
       app.currentStop = horizontalScrollBar.position;
       app.departureGroups = {};
       app.groupRef = {};
-      app.departures = {};
+      app.departures = null;
       app.appState = app.GET_DEPARTURES;
+      app.verticalScrollBar = null;
       app.updateDepartures(true);
     }
   }
