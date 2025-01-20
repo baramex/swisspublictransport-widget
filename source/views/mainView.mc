@@ -18,10 +18,12 @@ class swisspublictransportView extends WatchUi.View {
 
   (:smallOctogonal)
   const stateLocY = 64;
+  (:anyOctogonal)
   const stateLocY = 72;
 
   (:smallOctogonal)
   const stateHeight = 66;
+  (:anyOctogonal)
   const stateHeight = 76;
 
   function initialize() {
@@ -135,7 +137,8 @@ class swisspublictransportView extends WatchUi.View {
       }
     }
 
-    stateText.draw(dc);
+    stateText.width = dc.getWidth();
+    drawStateText(dc);
   }
 
   function updateCurrentStop() {
@@ -168,12 +171,7 @@ class swisspublictransportView extends WatchUi.View {
   }
 
   function onShow() as Void {
-    stateText = new WatchUi.TextArea({
-      :locX => WatchUi.LAYOUT_HALIGN_CENTER,
-      :locY => stateLocY,
-      :height => stateHeight,
-      :justification => Graphics.TEXT_JUSTIFY_CENTER,
-    });
+    initStateText();
     initDistanceText();
 
     Sensor.registerSensorDataListener(method(:onMag), {
@@ -183,6 +181,40 @@ class swisspublictransportView extends WatchUi.View {
         :sampleRate => 4,
       },
     });
+  }
+
+  (:anyOctogonal)
+  function initStateText() {
+    stateText = new WatchUi.TextArea({
+      :locX => WatchUi.LAYOUT_HALIGN_CENTER,
+      :locY => stateLocY,
+      :height => stateHeight,
+      :justification => Graphics.TEXT_JUSTIFY_CENTER,
+    });
+  }
+  (:anyRound)
+  function initStateText() {
+    distanceText = new WatchUi.Text({
+      :locX => WatchUi.LAYOUT_HALIGN_CENTER,
+      :locY => 0,
+      :font => Graphics.FONT_TINY,
+      :justification => Graphics.TEXT_JUSTIFY_CENTER |
+      Graphics.TEXT_JUSTIFY_VCENTER,
+      :color => Graphics.COLOR_BLACK,
+    });
+  }
+
+  (:anyOctogonal)
+  function drawStateText(dc as Dc) {
+    stateText.draw(dc);
+  }
+  (:anyRound)
+  function drawStateText(dc as Dc) {
+    stateText.height = dc.getHeight() * 0.3;
+    stateText.setJustification(
+      Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
+    );
+    stateText.draw(dc);
   }
 
   (:smallOctogonal)
@@ -196,22 +228,20 @@ class swisspublictransportView extends WatchUi.View {
 
   (:anyOctogonal)
   function initDistanceText() {
-    distanceText = new WatchUi.Text({
-      :locX => distanceLocX,
-      :locY => distanceLocY,
-      :font => Graphics.FONT_TINY,
+    stateText = new WatchUi.TextArea({
+      :locX => WatchUi.LAYOUT_HALIGN_CENTER,
+      :locY => stateLocY,
+      :height => stateHeight,
       :justification => Graphics.TEXT_JUSTIFY_CENTER,
-      :color => Graphics.COLOR_BLACK,
     });
   }
+  (:anyRound)
   function initDistanceText() {
-    distanceText = new WatchUi.Text({
+    stateText = new WatchUi.TextArea({
       :locX => WatchUi.LAYOUT_HALIGN_CENTER,
-      :locY => 0,
-      :font => Graphics.FONT_TINY,
+      :locY => WatchUi.LAYOUT_VALIGN_CENTER,
       :justification => Graphics.TEXT_JUSTIFY_CENTER |
       Graphics.TEXT_JUSTIFY_VCENTER,
-      :color => Graphics.COLOR_BLACK,
     });
   }
 
@@ -219,6 +249,7 @@ class swisspublictransportView extends WatchUi.View {
   function drawDistanceText(dc as Dc) {
     distanceText.draw(dc);
   }
+  (:anyRound)
   function drawDistanceText(dc as Dc) {
     distanceText.locY = dc.getHeight() * 0.1;
     distanceText.draw(dc);
@@ -321,6 +352,7 @@ class swisspublictransportView extends WatchUi.View {
       );
     }
   }
+  (:anyRound)
   function drawStopName(dc as Dc, stopText as String) {
     dc.drawText(
       WatchUi.LAYOUT_HALIGN_CENTER,
