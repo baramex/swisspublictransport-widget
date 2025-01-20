@@ -4,6 +4,8 @@ import Toybox.Lang;
 
 class DepartureGroupElement {
   var lineName as String;
+  var lineColor as String?;
+  var lineTextColor as String?;
   var platformName as String?;
   var locX as Number;
   var locY as Number;
@@ -12,6 +14,8 @@ class DepartureGroupElement {
 
   public function initialize(params as Dictionary) {
     lineName = params.get(:lineName) as String;
+    lineColor = params.get(:lineColor) as String;
+    lineTextColor = params.get(:lineTextColor) as String;
     locX = params.get(:locX) as Number;
     locY = params.get(:locY) as Number;
     departures = params.get(:departures) as Dictionary<Number, Departure>;
@@ -22,6 +26,8 @@ class DepartureGroupElement {
   public function draw(dc as Dc) as Void {
     var lineElement = new LineElement({
       :lineName => lineName,
+      :lineColor => lineColor,
+      :lineTextColor => lineTextColor,
       :locX => locX,
       :locY => locY,
     });

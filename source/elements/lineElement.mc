@@ -4,11 +4,15 @@ import Toybox.Lang;
 
 class LineElement {
   var lineName as String;
+  var lineColor as String?;
+  var lineTextColor as String?;
   var locX as Number;
   var locY as Number;
 
   public function initialize(params as Dictionary) {
     lineName = params.get(:lineName) as String;
+    lineColor = params.get(:lineColor) as String;
+    lineTextColor = params.get(:lineTextColor) as String;
     locX = params.get(:locX) as Number;
     locY = params.get(:locY) as Number;
   }
@@ -16,9 +20,23 @@ class LineElement {
   public function draw(dc as Dc) as Void {
     var w = dc.getTextWidthInPixels(lineName, Graphics.FONT_MEDIUM);
     var h = dc.getFontHeight(Graphics.FONT_MEDIUM);
-    dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
+    if (Graphics has :createColor && lineColor != null) {
+      dc.setColor(
+        Graphics.createColor(255, lineColor.substring(0, 2).toNumber(), lineColor.substring(4, 6).toNumber(), lineColor.substring(8, 10).toNumber()),
+        Graphics.COLOR_TRANSPARENT
+      );
+    } else {
+      dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
+    }
     dc.fillRoundedRectangle(locX, locY, w + 6, h + 2, 5);
+    if (Graphics has :createColor && lineTextColor != null) {
+      dc.setColor(
+        Graphics.createColor(255, lineTextColor.substring(0, 2).toNumber(), lineTextColor.substring(4, 6).toNumber(), lineTextColor.substring(8, 10).toNumber()),
+        Graphics.COLOR_TRANSPARENT
+      );
+    } else {
     dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+    }
     dc.drawText(
       locX + 3 + w / 2,
       locY + 1,

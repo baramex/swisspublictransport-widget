@@ -1,1 +1,6 @@
 project.manifest = manifest.xml
+
+base.excludeAnnotations = smallOctogonal;anyOctogonal
+instinct2s.excludeAnnotations = nothing
+instinct2.excludeAnnotations = smallOctogonal
+instinct2x.excludeAnnotations = smallOctogonal

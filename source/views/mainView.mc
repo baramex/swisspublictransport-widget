@@ -16,6 +16,14 @@ class swisspublictransportView extends WatchUi.View {
 
   var azimuth as Float?;
 
+  (:smallOctogonal)
+  const stateLocY = 64;
+  const stateLocY = 72;
+
+  (:smallOctogonal)
+  const stateHeight = 66;
+  const stateHeight = 76;
+
   function initialize() {
     View.initialize();
   }
@@ -61,71 +69,14 @@ class swisspublictransportView extends WatchUi.View {
         :format => :degrees,
       });
 
-      var stopTextWidth = dc.getTextWidthInPixels(
-        stopText,
-        Graphics.FONT_MEDIUM
-      );
-      if (stopTextWidth < 88) {
-        dc.drawText(
-          12,
-          35,
-          Graphics.FONT_MEDIUM,
-          stopText,
-          Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER
-        );
-      } else if (stopTextWidth < 95) {
-        dc.drawText(
-          5,
-          35,
-          Graphics.FONT_MEDIUM,
-          stopText,
-          Graphics.TEXT_JUSTIFY_LEFT
-        );
-      } else {
-        var firstPart = "";
-        for (var i = 0; i < stopText.length(); i++) {
-          var char = stopText.toCharArray()[i];
-          if (
-            dc.getTextWidthInPixels(firstPart + char, Graphics.FONT_MEDIUM) > 70
-          ) {
-            break;
-          }
-          firstPart += char;
-          if (char == ' ' || char == '-' || char == '/') {
-            var secondPart = stopText.substring(i + 1, stopText.length());
-            if (
-              dc.getTextWidthInPixels(secondPart, Graphics.FONT_MEDIUM) < 95
-            ) {
-              break;
-            }
-          }
-        }
-        dc.drawText(
-          25,
-          10,
-          Graphics.FONT_MEDIUM,
-          firstPart,
-          Graphics.TEXT_JUSTIFY_LEFT
-        );
-        var secondPart = stopText.substring(
-          firstPart.length(),
-          stopText.length()
-        );
-        dc.drawText(
-          5,
-          35,
-          Graphics.FONT_MEDIUM,
-          secondPart,
-          Graphics.TEXT_JUSTIFY_LEFT
-        );
-      }
+      drawStopName(dc, stopText);
 
       dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
       dc.fillCircle(144, 31, 32);
 
       var distance = PositionUtils.getDistance(app.position, stopLocation);
       distanceText.setText(Math.round(distance).toNumber() + "m");
-      distanceText.draw(dc);
+      drawDistanceText(dc);
 
       if (azimuth == null) {
         azimuth = 0.0;
@@ -168,6 +119,8 @@ class swisspublictransportView extends WatchUi.View {
         }
         var departureElement = new DepartureGroupElement({
           :lineName => ldepartures.values()[0].lineName,
+          :lineColor => ldepartures.values()[0].lineColor,
+          :lineTextColor => ldepartures.values()[0].lineTextColor,
           :platformName => ldepartures.values()[0].platformName,
           :locX => 6,
           :locY => 67 + (i - pos) * 52,
@@ -214,24 +167,14 @@ class swisspublictransportView extends WatchUi.View {
     requestUpdate();
   }
 
-  // Called when this View is brought to the foreground. Restore
-  // the state of this View and prepare it to be shown. This includes
-  // loading resources into memory.
   function onShow() as Void {
     stateText = new WatchUi.TextArea({
       :locX => WatchUi.LAYOUT_HALIGN_CENTER,
-      :locY => 75,
-      :width => 176,
-      :height => 70,
+      :locY => stateLocY,
+      :height => stateHeight,
       :justification => Graphics.TEXT_JUSTIFY_CENTER,
     });
-    distanceText = new WatchUi.Text({
-      :locX => 140,
-      :locY => 35,
-      :font => Graphics.FONT_TINY,
-      :justification => Graphics.TEXT_JUSTIFY_CENTER,
-      :color => Graphics.COLOR_BLACK,
-    });
+    initDistanceText();
 
     Sensor.registerSensorDataListener(method(:onMag), {
       :period => 1,
@@ -242,9 +185,152 @@ class swisspublictransportView extends WatchUi.View {
     });
   }
 
-  // Called when this View is removed from the screen. Save the
-  // state of this View here. This includes freeing resources from
-  // memory.
+  (:smallOctogonal)
+  const distanceLocX = 132;
+  (:anyOctogonal)
+  const distanceLocX = 140;
+  (:smallOctogonal)
+  const distanceLocY = 31;
+  (:anyOctogonal)
+  const distanceLocY = 35;
+
+  (:anyOctogonal)
+  function initDistanceText() {
+    distanceText = new WatchUi.Text({
+      :locX => distanceLocX,
+      :locY => distanceLocY,
+      :font => Graphics.FONT_TINY,
+      :justification => Graphics.TEXT_JUSTIFY_CENTER,
+      :color => Graphics.COLOR_BLACK,
+    });
+  }
+  function initDistanceText() {
+    distanceText = new WatchUi.Text({
+      :locX => WatchUi.LAYOUT_HALIGN_CENTER,
+      :locY => 0,
+      :font => Graphics.FONT_TINY,
+      :justification => Graphics.TEXT_JUSTIFY_CENTER |
+      Graphics.TEXT_JUSTIFY_VCENTER,
+      :color => Graphics.COLOR_BLACK,
+    });
+  }
+
+  (:anyOctogonal)
+  function drawDistanceText(dc as Dc) {
+    distanceText.draw(dc);
+  }
+  function drawDistanceText(dc as Dc) {
+    distanceText.locY = dc.getHeight() * 0.1;
+    distanceText.draw(dc);
+  }
+
+  (:smallOctogonal)
+  const smallStopNameWidth = 80;
+  (:anyOctogonal)
+  const smallStopNameWidth = 88;
+  (:smallOctogonal)
+  const mediumStopNameWidth = 87;
+  (:anyOctogonal)
+  const mediumStopNameWidth = 95;
+  (:smallOctogonal)
+  const flargeStopNameWidth = 63;
+  (:anyOctogonal)
+  const flargeStopNameWidth = 70;
+  (:smallOctogonal)
+  const smallStopNameLocX = 10;
+  (:anyOctogonal)
+  const smallStopNameLocX = 12;
+  (:smallOctogonal)
+  const smallStopNameLocY = 31;
+  (:anyOctogonal)
+  const smallStopNameLocY = 35;
+  (:smallOctogonal)
+  const mediumStopNameLocX = 3;
+  (:anyOctogonal)
+  const mediumStopNameLocX = 5;
+  (:smallOctogonal)
+  const mediumStopNameLocY = 31;
+  (:anyOctogonal)
+  const mediumStopNameLocY = 35;
+  (:smallOctogonal)
+  const flargeStopNameLocX = 20;
+  (:anyOctogonal)
+  const flargeStopNameLocX = 25;
+  (:smallOctogonal)
+  const flargeStopNameLocY = 8;
+  (:anyOctogonal)
+  const flargeStopNameLocY = 10;
+
+  (:anyOctogonal)
+  function drawStopName(dc as Dc, stopText as String) {
+    var stopTextWidth = dc.getTextWidthInPixels(stopText, Graphics.FONT_MEDIUM);
+    if (stopTextWidth < smallStopNameWidth) {
+      dc.drawText(
+        smallStopNameLocX,
+        smallStopNameLocY,
+        Graphics.FONT_MEDIUM,
+        stopText,
+        Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER
+      );
+    } else if (stopTextWidth < mediumStopNameWidth) {
+      dc.drawText(
+        mediumStopNameLocX,
+        mediumStopNameLocY,
+        Graphics.FONT_MEDIUM,
+        stopText,
+        Graphics.TEXT_JUSTIFY_LEFT
+      );
+    } else {
+      var firstPart = "";
+      for (var i = 0; i < stopText.length(); i++) {
+        var char = stopText.toCharArray()[i];
+        if (
+          dc.getTextWidthInPixels(firstPart + char, Graphics.FONT_MEDIUM) >
+          flargeStopNameWidth
+        ) {
+          break;
+        }
+        firstPart += char;
+        if (char == ' ' || char == '-' || char == '/') {
+          var secondPart = stopText.substring(i + 1, stopText.length());
+          if (
+            dc.getTextWidthInPixels(secondPart, Graphics.FONT_MEDIUM) <
+            mediumStopNameWidth
+          ) {
+            break;
+          }
+        }
+      }
+      dc.drawText(
+        flargeStopNameLocX,
+        flargeStopNameLocY,
+        Graphics.FONT_MEDIUM,
+        firstPart,
+        Graphics.TEXT_JUSTIFY_LEFT
+      );
+      var secondPart = stopText.substring(
+        firstPart.length(),
+        stopText.length()
+      );
+      dc.drawText(
+        mediumStopNameLocX,
+        mediumStopNameLocY,
+        Graphics.FONT_MEDIUM,
+        secondPart,
+        Graphics.TEXT_JUSTIFY_LEFT
+      );
+    }
+  }
+  function drawStopName(dc as Dc, stopText as String) {
+    dc.drawText(
+      WatchUi.LAYOUT_HALIGN_CENTER,
+      dc.getHeight() * 0.3,
+      Graphics.FONT_MEDIUM,
+      stopText,
+      Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
+    );
+  }
+
   function onHide() as Void {
     Sensor.unregisterSensorDataListener();
   }
