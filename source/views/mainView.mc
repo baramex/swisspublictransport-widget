@@ -194,13 +194,11 @@ class swisspublictransportView extends WatchUi.View {
   }
   (:anyRound)
   function initStateText() {
-    distanceText = new WatchUi.Text({
+    stateText = new WatchUi.Text({
       :locX => WatchUi.LAYOUT_HALIGN_CENTER,
-      :locY => 0,
-      :font => Graphics.FONT_TINY,
+      :locY => WatchUi.LAYOUT_VALIGN_CENTER,
       :justification => Graphics.TEXT_JUSTIFY_CENTER |
       Graphics.TEXT_JUSTIFY_VCENTER,
-      :color => Graphics.COLOR_BLACK,
     });
   }
 
@@ -211,9 +209,6 @@ class swisspublictransportView extends WatchUi.View {
   (:anyRound)
   function drawStateText(dc as Dc) {
     stateText.height = dc.getHeight() * 0.3;
-    stateText.setJustification(
-      Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
-    );
     stateText.draw(dc);
   }
 
@@ -228,20 +223,25 @@ class swisspublictransportView extends WatchUi.View {
 
   (:anyOctogonal)
   function initDistanceText() {
-    stateText = new WatchUi.TextArea({
-      :locX => WatchUi.LAYOUT_HALIGN_CENTER,
-      :locY => stateLocY,
-      :height => stateHeight,
+    distanceText = new WatchUi.TextArea({
+      :locX => distanceLocX,
+      :locY => distanceLocY,
+      :font => Graphics.FONT_TINY,
       :justification => Graphics.TEXT_JUSTIFY_CENTER,
+      :color => Graphics.COLOR_BLACK,
+      :height => 20
     });
   }
   (:anyRound)
   function initDistanceText() {
-    stateText = new WatchUi.TextArea({
+    distanceText = new WatchUi.TextArea({
       :locX => WatchUi.LAYOUT_HALIGN_CENTER,
       :locY => WatchUi.LAYOUT_VALIGN_CENTER,
-      :justification => Graphics.TEXT_JUSTIFY_CENTER |
+      :font => Graphics.FONT_TINY,
+      :justification => Graphics.TEXT_JUSTIFY_LEFT |
       Graphics.TEXT_JUSTIFY_VCENTER,
+      :color => Graphics.COLOR_WHITE,
+      :height => 20
     });
   }
 
