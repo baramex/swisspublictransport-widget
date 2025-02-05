@@ -12,13 +12,22 @@ class HorizontalScrollBar {
     position = params.get(:position) as Number;
   }
 
+  (:anyOctogonal)
+  const angle = 100;
+  (:anyRound)
+  const angle = 50;
+  (:anyOctogonal)
+  const startAngle = 0;
+  (:anyRound)
+  const startAngle = -90;
+
   public function draw(dc as Dc) as Void {
     dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_BLACK);
     var x = getX(dc);
     var y = getY(dc);
     var r = getRadius(dc);
     var gap = 4;
-    var size = (100 - gap * (length - 1)) / length;
+    var size = (angle - gap * (length - 1)) / length;
     for (var i = 0; i < length; i++) {
       if (i == position) {
         dc.setPenWidth(4);
@@ -27,12 +36,12 @@ class HorizontalScrollBar {
           y,
           r,
           Graphics.ARC_CLOCKWISE,
-          50 - size * i - gap * i,
-          50 - size * (i + 1) - gap * i
+          startAngle + angle / 2 - size * i - gap * i,
+          startAngle + angle / 2 - size * (i + 1) - gap * i
         );
       } else {
-        var a1 = 50 - size * i - gap * i;
-        var a2 = 50 - size * (i + 1) - gap * i;
+        var a1 = startAngle + angle / 2 - size * i - gap * i;
+        var a2 = startAngle + angle / 2 - size * (i + 1) - gap * i;
         dc.setPenWidth(1);
         dc.drawArc(x, y, r + 1.5, Graphics.ARC_CLOCKWISE, a1, a2);
         dc.drawArc(x, y, r - 1.5, Graphics.ARC_CLOCKWISE, a1, a2);
