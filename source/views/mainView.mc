@@ -326,7 +326,7 @@ class swisspublictransportView extends WatchUi.View {
   (:largeOctogonal)
   const arrowX = 140;
   (:smallOctogonal)
-  const arrowY = 12;
+  const arrowY = 18;
   (:largeOctogonal)
   const arrowY = 20;
   (:smallOctogonal)
@@ -397,7 +397,7 @@ class swisspublictransportView extends WatchUi.View {
 
   (:smallOctogonal)
   function getDepartureWidth(dc, i) {
-    var w = dc.getWidth();
+    var w = 156;
     if (i == 1) {
       w -= 12;
     }
