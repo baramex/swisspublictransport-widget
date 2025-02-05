@@ -364,13 +364,13 @@ class swisspublictransportView extends WatchUi.View {
 
   (:anyRound)
   function drawArrow(dc, angle) {
-    var x = dc.getWidth() / 2 - 20;
-    var y = dc.getHeight() * 0.1;
+    var x = dc.getWidth() / 2 - 25;
+    var y = dc.getHeight() * 0.15;
     var x1 = x + 20 * Math.cos(angle);
     var y1 = y + 12 * Math.sin(angle);
     var x2 = x - 20 * Math.cos(angle);
     var y2 = y - 12 * Math.sin(angle);
-    dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_BLACK);
+    dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
     dc.setPenWidth(3);
     dc.drawLine(x1, y1, x2, y2);
     // arrow head
