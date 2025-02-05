@@ -313,7 +313,7 @@ class swisspublictransportView extends WatchUi.View {
   (:anyRound)
   function drawStopName(dc as Dc, stopText as String) {
     dc.drawText(
-      WatchUi.LAYOUT_HALIGN_CENTER,
+      dc.getWidth() / 2,
       dc.getHeight() * 0.3,
       Graphics.FONT_MEDIUM,
       stopText,
@@ -413,9 +413,9 @@ class swisspublictransportView extends WatchUi.View {
   }
   (:anyRound)
   function getDepartureWidth(dc, i) {
-    var w = dc.getWidth();
+    var w = dc.getWidth() - 10;
     if (i == 1) {
-      w *= 0.8;
+      w *= 0.85;
     }
     return w;
   }

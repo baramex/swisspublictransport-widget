@@ -19,10 +19,14 @@ class HorizontalScrollBar {
   (:anyOctogonal)
   const startAngle = 0;
   (:anyRound)
-  const startAngle = -90;
+  const startAngle = 90;
+  (:anyOctogonal)
+  const color = Graphics.COLOR_BLACK;
+  (:anyRound)
+  const color = Graphics.COLOR_WHITE;
 
   public function draw(dc as Dc) as Void {
-    dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_BLACK);
+    dc.setColor(color, color);
     var x = getX(dc);
     var y = getY(dc);
     var r = getRadius(dc);
@@ -45,8 +49,8 @@ class HorizontalScrollBar {
         dc.setPenWidth(1);
         dc.drawArc(x, y, r + 1.5, Graphics.ARC_CLOCKWISE, a1, a2);
         dc.drawArc(x, y, r - 1.5, Graphics.ARC_CLOCKWISE, a1, a2);
-        var ra1 = Math.toRadians(a1);
-        var ra2 = Math.toRadians(a2);
+        var ra1 = Math.toRadians(-a1);
+        var ra2 = Math.toRadians(-a2);
         dc.drawLine(
           x + Math.cos(ra1) * (r - 1.5),
           y + Math.sin(ra1) * (r - 1.5),
@@ -99,6 +103,6 @@ class HorizontalScrollBar {
   }
   (:anyRound)
   function getRadius(dc) {
-    return dc.getWidth() / 2 - 4;
+    return dc.getWidth() / 2 - 6;
   }
 }

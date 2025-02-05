@@ -69,7 +69,7 @@ class DepartureGroupElement {
     }
     dc.drawText(
       locX + lineElement.getWidth(dc) + 4,
-      locY + 26,
+      locY + height / 2,
       Graphics.FONT_SMALL,
       depText,
       Graphics.TEXT_JUSTIFY_LEFT
@@ -81,7 +81,7 @@ class DepartureGroupElement {
         :locX => width -
         dc.getTextWidthInPixels(platformName, Graphics.FONT_TINY) -
         8,
-        :locY => locY + 26,
+        :locY => locY + height / 2,
       });
       platformElement.draw(dc);
     }
