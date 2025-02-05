@@ -22,7 +22,12 @@ class LineElement {
     var h = dc.getFontHeight(Graphics.FONT_MEDIUM);
     if (Graphics has :createColor && lineColor != null) {
       dc.setColor(
-        Graphics.createColor(255, lineColor.substring(0, 3).toNumber(), lineColor.substring(4, 7).toNumber(), lineColor.substring(8, 11).toNumber()),
+        Graphics.createColor(
+          255,
+          lineColor.substring(0, 3).toNumber(),
+          lineColor.substring(4, 7).toNumber(),
+          lineColor.substring(8, 11).toNumber()
+        ),
         Graphics.COLOR_TRANSPARENT
       );
     } else {
@@ -30,12 +35,13 @@ class LineElement {
     }
     dc.fillRoundedRectangle(locX, locY, w + 6, h + 2, 5);
     if (Graphics has :createColor && lineTextColor != null) {
-      dc.setColor(
-        Graphics.createColor(255, lineTextColor.substring(0, 3).toNumber(), lineTextColor.substring(4, 7).toNumber(), lineTextColor.substring(8, 11).toNumber()),
-        Graphics.COLOR_TRANSPARENT
-      );
+      if (lineTextColor.substring(0, 3).toNumber() == 0) {
+        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+      } else {
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+      }
     } else {
-    dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+      dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
     }
     dc.drawText(
       locX + 3 + w / 2,
