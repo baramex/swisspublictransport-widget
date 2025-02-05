@@ -14,9 +14,9 @@ class HorizontalScrollBar {
 
   public function draw(dc as Dc) as Void {
     dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_BLACK);
-    var x = 144;
-    var y = 31;
-    var r = 28;
+    var x = getX(dc);
+    var y = getY(dc);
+    var r = getRadius(dc);
     var gap = 4;
     var size = (100 - gap * (length - 1)) / length;
     for (var i = 0; i < length; i++) {
@@ -52,5 +52,44 @@ class HorizontalScrollBar {
         );
       }
     }
+  }
+
+  (:smallOctogonal)
+  function getX() {
+    return 136;
+  }
+  (:anyOctogonal)
+  function getX() {
+    return 144;
+  }
+  (:anyRound)
+  function getX(dc) {
+    return dc.getWidth() / 2;
+  }
+
+  (:smallOctogonal)
+  function getY() {
+    return 27;
+  }
+  (:anyOctogonal)
+  function getY() {
+    return 31;
+  }
+  (:anyRound)
+  function getY(dc) {
+    return dc.getHeight() / 2;
+  }
+
+  (:smallOctogonal)
+  function getRadius() {
+    return 24;
+  }
+  (:anyOctogonal)
+  function getRadius() {
+    return 28;
+  }
+  (:anyRound)
+  function getRadius(dc) {
+    return dc.getWidth() / 2 - 4;
   }
 }

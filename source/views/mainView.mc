@@ -362,7 +362,7 @@ class swisspublictransportView extends WatchUi.View {
   (:anyOctogonal)
   const roundCenterY = 31;
   (:smallOctogonal)
-  const roundRadius = 27;
+  const roundRadius = 28;
   (:anyOctogonal)
   const roundRadius = 32;
 
