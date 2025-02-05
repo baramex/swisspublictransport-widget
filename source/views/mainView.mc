@@ -9,7 +9,6 @@ class swisspublictransportView extends WatchUi.View {
   var type = "main";
 
   var stateText;
-  var distanceText;
 
   var verticalScrollBar;
   var horizontalScrollBar;
@@ -80,8 +79,7 @@ class swisspublictransportView extends WatchUi.View {
       drawArrow(dc, angle);
 
       var distance = PositionUtils.getDistance(app.position, stopLocation);
-      distanceText.setText(Math.round(distance).toNumber() + "m");
-      drawDistanceText(dc);
+      drawDistanceText(dc, Math.round(distance).toNumber() + "m");
 
       if (horizontalScrollBar != null) {
         horizontalScrollBar.draw(dc);
@@ -156,7 +154,6 @@ class swisspublictransportView extends WatchUi.View {
 
   function onShow() as Void {
     initStateText();
-    initDistanceText();
 
     Sensor.registerSensorDataListener(method(:onMag), {
       :period => 1,
@@ -206,37 +203,14 @@ class swisspublictransportView extends WatchUi.View {
   const distanceLocY = 35;
 
   (:anyOctogonal)
-  function initDistanceText() {
-    distanceText = new WatchUi.TextArea({
-      :locX => distanceLocX,
-      :locY => distanceLocY,
-      :font => Graphics.FONT_TINY,
-      :justification => Graphics.TEXT_JUSTIFY_CENTER,
-      :color => Graphics.COLOR_BLACK,
-      :height => 20,
-    });
+  function drawDistanceText(dc as Dc, text as String) {
+    dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
+    dc.drawText(distanceLocX, distanceLocY, Graphics.FONT_TINY, text, Graphics.TEXT_JUSTIFY_CENTER);
   }
   (:anyRound)
-  function initDistanceText() {
-    distanceText = new WatchUi.TextArea({
-      :locX => WatchUi.LAYOUT_HALIGN_CENTER,
-      :locY => WatchUi.LAYOUT_VALIGN_CENTER,
-      :font => Graphics.FONT_TINY,
-      :justification => Graphics.TEXT_JUSTIFY_LEFT |
-      Graphics.TEXT_JUSTIFY_VCENTER,
-      :color => Graphics.COLOR_WHITE,
-      :height => 20,
-    });
-  }
-
-  (:anyOctogonal)
-  function drawDistanceText(dc as Dc) {
-    distanceText.draw(dc);
-  }
-  (:anyRound)
-  function drawDistanceText(dc as Dc) {
-    distanceText.locY = dc.getHeight() * 0.1;
-    distanceText.draw(dc);
+  function drawDistanceText(dc as Dc, text as String) {
+    dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
+    dc.drawText(dc.getWidth() / 2, dc.getHeight() * 0.1, Graphics.FONT_TINY, text, Graphics.TEXT_JUSTIFY_LEFT);
   }
 
   (:smallOctogonal)

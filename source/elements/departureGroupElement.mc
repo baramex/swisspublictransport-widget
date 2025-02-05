@@ -56,8 +56,12 @@ class DepartureGroupElement {
       }
       var time = dep.departureTime;
       var relative = time.compare(Time.now());
-      if (relative < 15 && relative >= 0) {
-        depText += "🚌  ";
+      if (relative < 20) {
+        if (relative >= 0) {
+          depText += "🚌  ";
+        } else {
+          depText += "💨  ";
+        }
       } else {
         depText += Math.ceil(relative / 60.0).toNumber() + "'  ";
       }
