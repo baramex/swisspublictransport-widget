@@ -17,12 +17,12 @@ class swisspublictransportView extends WatchUi.View {
 
   (:smallOctogonal)
   const stateLocY = 64;
-  (:anyOctogonal)
+  (:largeOctogonal)
   const stateLocY = 72;
 
   (:smallOctogonal)
   const stateHeight = 66;
-  (:anyOctogonal)
+  (:largeOctogonal)
   const stateHeight = 76;
 
   function initialize() {
@@ -195,11 +195,11 @@ class swisspublictransportView extends WatchUi.View {
 
   (:smallOctogonal)
   const distanceLocX = 132;
-  (:anyOctogonal)
+  (:largeOctogonal)
   const distanceLocX = 140;
   (:smallOctogonal)
   const distanceLocY = 31;
-  (:anyOctogonal)
+  (:largeOctogonal)
   const distanceLocY = 35;
 
   (:anyOctogonal)
@@ -215,39 +215,39 @@ class swisspublictransportView extends WatchUi.View {
 
   (:smallOctogonal)
   const smallStopNameWidth = 80;
-  (:anyOctogonal)
+  (:largeOctogonal)
   const smallStopNameWidth = 88;
   (:smallOctogonal)
   const mediumStopNameWidth = 87;
-  (:anyOctogonal)
+  (:largeOctogonal)
   const mediumStopNameWidth = 95;
   (:smallOctogonal)
   const flargeStopNameWidth = 63;
-  (:anyOctogonal)
+  (:largeOctogonal)
   const flargeStopNameWidth = 70;
   (:smallOctogonal)
   const smallStopNameLocX = 10;
-  (:anyOctogonal)
+  (:largeOctogonal)
   const smallStopNameLocX = 12;
   (:smallOctogonal)
   const smallStopNameLocY = 31;
-  (:anyOctogonal)
+  (:largeOctogonal)
   const smallStopNameLocY = 35;
   (:smallOctogonal)
   const mediumStopNameLocX = 3;
-  (:anyOctogonal)
+  (:largeOctogonal)
   const mediumStopNameLocX = 5;
   (:smallOctogonal)
   const mediumStopNameLocY = 31;
-  (:anyOctogonal)
+  (:largeOctogonal)
   const mediumStopNameLocY = 35;
   (:smallOctogonal)
   const flargeStopNameLocX = 20;
-  (:anyOctogonal)
+  (:largeOctogonal)
   const flargeStopNameLocX = 25;
   (:smallOctogonal)
   const flargeStopNameLocY = 8;
-  (:anyOctogonal)
+  (:largeOctogonal)
   const flargeStopNameLocY = 10;
 
   (:anyOctogonal)
@@ -323,23 +323,23 @@ class swisspublictransportView extends WatchUi.View {
 
   (:smallOctogonal)
   const arrowX = 128;
-  (:anyOctogonal)
+  (:largeOctogonal)
   const arrowX = 140;
   (:smallOctogonal)
   const arrowY = 12;
-  (:anyOctogonal)
+  (:largeOctogonal)
   const arrowY = 20;
   (:smallOctogonal)
   const roundCenterX = 136;
-  (:anyOctogonal)
+  (:largeOctogonal)
   const roundCenterX = 144;
   (:smallOctogonal)
   const roundCenterY = 27;
-  (:anyOctogonal)
+  (:largeOctogonal)
   const roundCenterY = 31;
   (:smallOctogonal)
   const roundRadius = 28;
-  (:anyOctogonal)
+  (:largeOctogonal)
   const roundRadius = 32;
 
   (:anyOctogonal)
@@ -386,7 +386,7 @@ class swisspublictransportView extends WatchUi.View {
   function getDepartureHeight(dc) {
     return 46;
   }
-  (:anyOctogonal)
+  (:largeOctogonal)
   function getDepartureHeight(dc) {
     return 52;
   }
@@ -403,7 +403,7 @@ class swisspublictransportView extends WatchUi.View {
     }
     return w;
   }
-  (:anyOctogonal)
+  (:largeOctogonal)
   function getDepartureWidth(dc, i) {
     var w = dc.getWidth();
     if (i == 1) {
@@ -424,7 +424,7 @@ class swisspublictransportView extends WatchUi.View {
   function getDepartureY(dc) {
     return 60;
   }
-  (:anyOctogonal)
+  (:largeOctogonal)
   function getDepartureY(dc) {
     return 67;
   }

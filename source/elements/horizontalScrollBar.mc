@@ -67,7 +67,7 @@ class HorizontalScrollBar {
   function getX(dc) {
     return 136;
   }
-  (:anyOctogonal)
+  (:largeOctogonal)
   function getX(dc) {
     return 144;
   }
@@ -80,7 +80,7 @@ class HorizontalScrollBar {
   function getY(dc) {
     return 27;
   }
-  (:anyOctogonal)
+  (:largeOctogonal)
   function getY(dc) {
     return 31;
   }
@@ -93,7 +93,7 @@ class HorizontalScrollBar {
   function getRadius(dc) {
     return 24;
   }
-  (:anyOctogonal)
+  (:largeOctogonal)
   function getRadius(dc) {
     return 28;
   }

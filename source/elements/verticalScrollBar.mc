@@ -13,11 +13,11 @@ class VerticalScrollBar {
 
   (:smallOctogonal)
   const y = 47;
-  (:anyOctogonal)
+  (:largeOctogonal)
   const y = 51;
   (:smallOctogonal)
   const height = 63;
-  (:anyOctogonal)
+  (:largeOctogonal)
   const height = 75;
 
   (:anyOctogonal)
