@@ -73,33 +73,15 @@ class swisspublictransportView extends WatchUi.View {
 
       drawStopName(dc, stopText);
 
-      dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
-      dc.fillCircle(144, 31, 32);
-
-      var distance = PositionUtils.getDistance(app.position, stopLocation);
-      distanceText.setText(Math.round(distance).toNumber() + "m");
-      drawDistanceText(dc);
-
       if (azimuth == null) {
         azimuth = 0.0;
       }
       var angle = PositionUtils.getAngle(app.position, stopLocation) - azimuth;
+      drawArrow(dc, angle);
 
-      var x1 = 140 + 20 * Math.cos(angle);
-      var y1 = 20 + 12 * Math.sin(angle);
-      var x2 = 140 - 20 * Math.cos(angle);
-      var y2 = 20 - 12 * Math.sin(angle);
-      dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_BLACK);
-      dc.setPenWidth(3);
-      dc.drawLine(x1, y1, x2, y2);
-      // arrow head
-      var x3 = 140 - 10 * Math.cos(angle + Math.PI / 2);
-      var y3 = 20 - 6 * Math.sin(angle + Math.PI / 2);
-      var x4 = 140 - 10 * Math.cos(angle - Math.PI / 2);
-      var y4 = 20 - 6 * Math.sin(angle - Math.PI / 2);
-      dc.drawLine(x2, y2, x3, y3);
-      dc.drawLine(x2, y2, x4, y4);
-      dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
+      var distance = PositionUtils.getDistance(app.position, stopLocation);
+      distanceText.setText(Math.round(distance).toNumber() + "m");
+      drawDistanceText(dc);
 
       if (horizontalScrollBar != null) {
         horizontalScrollBar.draw(dc);
@@ -229,7 +211,7 @@ class swisspublictransportView extends WatchUi.View {
       :font => Graphics.FONT_TINY,
       :justification => Graphics.TEXT_JUSTIFY_CENTER,
       :color => Graphics.COLOR_BLACK,
-      :height => 20
+      :height => 20,
     });
   }
   (:anyRound)
@@ -241,7 +223,7 @@ class swisspublictransportView extends WatchUi.View {
       :justification => Graphics.TEXT_JUSTIFY_LEFT |
       Graphics.TEXT_JUSTIFY_VCENTER,
       :color => Graphics.COLOR_WHITE,
-      :height => 20
+      :height => 20,
     });
   }
 
@@ -361,6 +343,67 @@ class swisspublictransportView extends WatchUi.View {
       stopText,
       Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
     );
+  }
+
+  (:smallOctogonal)
+  const arrowX = 128;
+  (:anyOctogonal)
+  const arrowX = 140;
+  (:smallOctogonal)
+  const arrowY = 12;
+  (:anyOctogonal)
+  const arrowY = 20;
+  (:smallOctogonal)
+  const roundCenterX = 136;
+  (:anyOctogonal)
+  const roundCenterX = 144;
+  (:smallOctogonal)
+  const roundCenterY = 27;
+  (:anyOctogonal)
+  const roundCenterY = 31;
+  (:smallOctogonal)
+  const roundRadius = 27;
+  (:anyOctogonal)
+  const roundRadius = 32;
+
+  (:anyOctogonal)
+  function drawArrow(dc, angle) {
+    dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
+    dc.fillCircle(roundCenterX, roundCenterY, roundRadius);
+    var x1 = arrowX + 20 * Math.cos(angle);
+    var y1 = arrowY + 12 * Math.sin(angle);
+    var x2 = arrowX - 20 * Math.cos(angle);
+    var y2 = arrowY - 12 * Math.sin(angle);
+    dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_BLACK);
+    dc.setPenWidth(3);
+    dc.drawLine(x1, y1, x2, y2);
+    // arrow head
+    var x3 = arrowX - 10 * Math.cos(angle + Math.PI / 2);
+    var y3 = arrowY - 6 * Math.sin(angle + Math.PI / 2);
+    var x4 = arrowX - 10 * Math.cos(angle - Math.PI / 2);
+    var y4 = arrowY - 6 * Math.sin(angle - Math.PI / 2);
+    dc.drawLine(x2, y2, x3, y3);
+    dc.drawLine(x2, y2, x4, y4);
+  }
+
+  (:anyRound)
+  function drawArrow(dc, angle) {
+    var x = dc.getWidth() / 2 - 20;
+    var y = dc.getHeight() * 0.1;
+    var x1 = x + 20 * Math.cos(angle);
+    var y1 = y + 12 * Math.sin(angle);
+    var x2 = x - 20 * Math.cos(angle);
+    var y2 = y - 12 * Math.sin(angle);
+    dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_BLACK);
+    dc.setPenWidth(3);
+    dc.drawLine(x1, y1, x2, y2);
+    // arrow head
+    var x3 = x - 10 * Math.cos(angle + Math.PI / 2);
+    var y3 = y - 6 * Math.sin(angle + Math.PI / 2);
+    var x4 = x - 10 * Math.cos(angle - Math.PI / 2);
+    var y4 = y - 6 * Math.sin(angle - Math.PI / 2);
+    dc.drawLine(x2, y2, x3, y3);
+    dc.drawLine(x2, y2, x4, y4);
   }
 
   function onHide() as Void {
