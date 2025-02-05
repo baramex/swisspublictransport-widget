@@ -107,7 +107,7 @@ class swisspublictransportView extends WatchUi.View {
           :lineTextColor => ldepartures.values()[0].lineTextColor,
           :platformName => ldepartures.values()[0].platformName,
           :locX => 6,
-          :locY => getDepartureHeight(dc) + (i - pos) * 52,
+          :locY => getDepartureY(dc) + (i - pos) * getDepartureHeight(dc),
           :width => getDepartureWidth(dc, i - pos),
           :height => getDepartureHeight(dc),
           :departures => ldepartures,
@@ -409,11 +409,11 @@ class swisspublictransportView extends WatchUi.View {
   }
 
   (:smallOctogonal)
-  function getDepartureHeight() {
+  function getDepartureHeight(dc) {
     return 46;
   }
   (:anyOctogonal)
-  function getDepartureHeight() {
+  function getDepartureHeight(dc) {
     return 52;
   }
   (:anyRound)
@@ -447,11 +447,11 @@ class swisspublictransportView extends WatchUi.View {
   }
 
   (:smallOctogonal)
-  function getDepartureY() {
+  function getDepartureY(dc) {
     return 60;
   }
   (:anyOctogonal)
-  function getDepartureY() {
+  function getDepartureY(dc) {
     return 67;
   }
   (:anyRound)
