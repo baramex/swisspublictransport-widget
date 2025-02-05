@@ -107,7 +107,9 @@ class swisspublictransportView extends WatchUi.View {
           :lineTextColor => ldepartures.values()[0].lineTextColor,
           :platformName => ldepartures.values()[0].platformName,
           :locX => 6,
-          :locY => 67 + (i - pos) * 52,
+          :locY => getDepartureHeight(dc) + (i - pos) * 52,
+          :width => getDepartureWidth(dc, i - pos),
+          :height => getDepartureHeight(dc),
           :departures => ldepartures,
           :destinationName => ldepartures.values()[0].destinationName,
         });
@@ -404,6 +406,57 @@ class swisspublictransportView extends WatchUi.View {
     var y4 = y - 6 * Math.sin(angle - Math.PI / 2);
     dc.drawLine(x2, y2, x3, y3);
     dc.drawLine(x2, y2, x4, y4);
+  }
+
+  (:smallOctogonal)
+  function getDepartureHeight() {
+    return 46;
+  }
+  (:anyOctogonal)
+  function getDepartureHeight() {
+    return 52;
+  }
+  (:anyRound)
+  function getDepartureHeight(dc) {
+    return dc.getHeight() * 0.3;
+  }
+
+  (:smallOctogonal)
+  function getDepartureWidth(dc, i) {
+    var w = dc.getWidth();
+    if (i == 1) {
+      w -= 12;
+    }
+    return w;
+  }
+  (:anyOctogonal)
+  function getDepartureWidth(dc, i) {
+    var w = dc.getWidth();
+    if (i == 1) {
+      w -= 20;
+    }
+    return w;
+  }
+  (:anyRound)
+  function getDepartureWidth(dc, i) {
+    var w = dc.getWidth();
+    if (i == 1) {
+      w *= 0.8;
+    }
+    return w;
+  }
+
+  (:smallOctogonal)
+  function getDepartureY() {
+    return 60;
+  }
+  (:anyOctogonal)
+  function getDepartureY() {
+    return 67;
+  }
+  (:anyRound)
+  function getDepartureY(dc) {
+    return dc.getHeight() * 0.4;
   }
 
   function onHide() as Void {

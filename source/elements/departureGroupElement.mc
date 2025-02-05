@@ -9,6 +9,8 @@ class DepartureGroupElement {
   var platformName as String?;
   var locX as Number;
   var locY as Number;
+  var height as Number;
+  var width as Number;
   var departures as Dictionary<Number, Departure>;
   var destinationName as String;
 
@@ -18,6 +20,8 @@ class DepartureGroupElement {
     lineTextColor = params.get(:lineTextColor) as String;
     locX = params.get(:locX) as Number;
     locY = params.get(:locY) as Number;
+    height = params.get(:height) as Number;
+    width = params.get(:width) as Number;
     departures = params.get(:departures) as Dictionary<Number, Departure>;
     platformName = params.get(:platformName) as String;
     destinationName = params.get(:destinationName) as String;
@@ -67,17 +71,12 @@ class DepartureGroupElement {
       Graphics.TEXT_JUSTIFY_LEFT
     );
 
-    var offset = 0;
-    if (locY > 100) {
-      offset = 20;
-    }
     if (platformName != null) {
       var platformElement = new PlatformElement({
         :platformName => platformName,
-        :locX => 176 -
+        :locX => width -
         dc.getTextWidthInPixels(platformName, Graphics.FONT_TINY) -
-        8 -
-        offset,
+        8,
         :locY => locY + 26,
       });
       platformElement.draw(dc);
