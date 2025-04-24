@@ -1,0 +1,8 @@
+<strings>
+    <string id="AppName">Fahrpläne Öffentlicher Verkehr</string>
+    <string id="NoStopFound">Kein Haltestelle gefunden</string>
+    <string id="NoDepartureFound">Keine Abfahrt gefunden</string>
+    <string id="GettingPosition">Abrufen der Position...</string>
+    <string id="GettingStops">Abrufen von Haltestellen...</string>
+    <string id="GettingDepartures">Abrufen der Abfahrten...</string>
+</strings>

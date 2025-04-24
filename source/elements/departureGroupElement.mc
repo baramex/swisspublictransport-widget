@@ -40,7 +40,7 @@ class DepartureGroupElement {
     dc.drawText(
       locX + lineElement.getWidth(dc) + 4,
       locY + lineElement.getHeight(dc) / 2,
-      Graphics.FONT_TINY,
+      Graphics.FONT_XTINY,
       destinationName,
       Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER
     );
@@ -70,7 +70,7 @@ class DepartureGroupElement {
     dc.drawText(
       locX + lineElement.getWidth(dc) + 4,
       locY + height / 2,
-      Graphics.FONT_SMALL,
+      Graphics.FONT_TINY,
       depText,
       Graphics.TEXT_JUSTIFY_LEFT
     );

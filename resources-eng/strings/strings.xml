@@ -1,0 +1,8 @@
+<strings>
+    <string id="AppName">Public Transport Timetables</string>
+    <string id="NoStopFound">No stop found</string>
+    <string id="NoDepartureFound">No departure found</string>
+    <string id="GettingPosition">Getting position...</string>
+    <string id="GettingStops">Getting stops...</string>
+    <string id="GettingDepartures">Getting departures...</string>
+</strings>

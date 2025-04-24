@@ -18,8 +18,8 @@ class LineElement {
   }
 
   public function draw(dc as Dc) as Void {
-    var w = dc.getTextWidthInPixels(lineName, Graphics.FONT_MEDIUM);
-    var h = dc.getFontHeight(Graphics.FONT_MEDIUM);
+    var w = dc.getTextWidthInPixels(lineName, Graphics.FONT_SMALL);
+    var h = dc.getFontHeight(Graphics.FONT_SMALL);
     if (Graphics has :createColor && lineColor != null) {
       dc.setColor(
         Graphics.createColor(
@@ -46,7 +46,7 @@ class LineElement {
     dc.drawText(
       locX + 3 + w / 2,
       locY + 1,
-      Graphics.FONT_MEDIUM,
+      Graphics.FONT_SMALL,
       lineName,
       Graphics.TEXT_JUSTIFY_CENTER
     );
@@ -54,10 +54,10 @@ class LineElement {
   }
 
   public function getWidth(dc as Dc) as Number {
-    return dc.getTextWidthInPixels(lineName, Graphics.FONT_MEDIUM) + 6;
+    return dc.getTextWidthInPixels(lineName, Graphics.FONT_SMALL) + 6;
   }
 
   public function getHeight(dc as Dc) as Number {
-    return dc.getFontHeight(Graphics.FONT_MEDIUM) + 2;
+    return dc.getFontHeight(Graphics.FONT_SMALL) + 2;
   }
 }

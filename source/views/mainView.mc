@@ -15,6 +15,12 @@ class swisspublictransportView extends WatchUi.View {
 
   var azimuth as Float?;
 
+  const gettingPosition = WatchUi.loadResource(Rez.Strings.GettingPosition);
+    const gettingStops = WatchUi.loadResource(Rez.Strings.GettingStops);
+    const gettingDepartures = WatchUi.loadResource(Rez.Strings.GettingDepartures);
+    const noStopFound = WatchUi.loadResource(Rez.Strings.NoStopFound);
+    const noDepartureFound = WatchUi.loadResource(Rez.Strings.NoDepartureFound);
+
   (:smallOctogonal)
   const stateLocY = 64;
   (:largeOctogonal)
@@ -45,20 +51,20 @@ class swisspublictransportView extends WatchUi.View {
     dc.clear();
 
     if (app.appState == app.GET_LOCATION) {
-      stateText.setText("Récupération de la position...");
+      stateText.setText(gettingPosition);
     } else if (app.appState == app.GET_STOPS) {
-      stateText.setText("Récupération des arrêts...");
+      stateText.setText(gettingStops);
     } else if (app.appState == app.GET_DEPARTURES) {
-      stateText.setText("Récupération des départs...");
+      stateText.setText(gettingDepartures);
     } else if (app.appState == app.DISPLAY) {
       stateText.setText("");
     }
 
     if (app.stops != null && app.stops.size() == 0) {
-      stateText.setText("Aucun arrêt trouvé");
+      stateText.setText(noStopFound);
     }
     if (app.departures != null && app.departures.size() == 0) {
-      stateText.setText("Aucun départ trouvé");
+      stateText.setText(noDepartureFound);
     }
 
     if (app.currentStop != null && app.stops.hasKey(app.currentStop)) {
@@ -104,7 +110,7 @@ class swisspublictransportView extends WatchUi.View {
           :lineColor => ldepartures.values()[0].lineColor,
           :lineTextColor => ldepartures.values()[0].lineTextColor,
           :platformName => ldepartures.values()[0].platformName,
-          :locX => 6,
+          :locX => getDepartureX(dc, i-pos),
           :locY => getDepartureY(dc) + (i - pos) * getDepartureHeight(dc),
           :width => getDepartureWidth(dc, i - pos),
           :height => getDepartureHeight(dc),
@@ -175,11 +181,12 @@ class swisspublictransportView extends WatchUi.View {
   }
   (:anyRound)
   function initStateText() {
-    stateText = new WatchUi.Text({
+    stateText = new WatchUi.TextArea({
       :locX => WatchUi.LAYOUT_HALIGN_CENTER,
       :locY => WatchUi.LAYOUT_VALIGN_CENTER,
       :justification => Graphics.TEXT_JUSTIFY_CENTER |
       Graphics.TEXT_JUSTIFY_VCENTER,
+      :font => Graphics.FONT_SMALL
     });
   }
 
@@ -315,7 +322,7 @@ class swisspublictransportView extends WatchUi.View {
     dc.drawText(
       dc.getWidth() / 2,
       dc.getHeight() * 0.3,
-      Graphics.FONT_MEDIUM,
+      Graphics.FONT_SMALL,
       stopText,
       Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
     );
@@ -413,11 +420,25 @@ class swisspublictransportView extends WatchUi.View {
   }
   (:anyRound)
   function getDepartureWidth(dc, i) {
-    var w = dc.getWidth() - 10;
+    var w = dc.getWidth() * 0.95;
     if (i == 1) {
-      w *= 0.85;
+      w *= 0.78;
     }
     return w;
+  }
+
+  (:anyOctogonal)
+  function getDepartureX(dc, i) {
+    return 6;
+  }
+  (:anyRound)
+  function getDepartureX(dc, i) {
+    if(i == 1) {
+        return dc.getWidth() * 0.15;
+    }
+    else {
+        return 6;
+    }
   }
 
   (:smallOctogonal)
