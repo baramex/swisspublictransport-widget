@@ -5,4 +5,8 @@
     <string id="GettingPosition">Récupération de la position...</string>
     <string id="GettingStops">Récupération des arrêts...</string>
     <string id="GettingDepartures">Récupération des départs...</string>
+
+    <string id="AddToFavorites">Ajouter aux favoris</string>
+    <string id="RemoveFromFavorites">Retirer des favoris</string>
+    <string id="SetAsGlanceStop">Définir comme arrêt de vue</string>
 </strings>

@@ -12,7 +12,8 @@ class Formatter {
           data[i].get("ref"),
           data[i].get("name"),
           data[i].get("lat"),
-          data[i].get("lon")
+          data[i].get("lon"),
+          false
         );
         stops[data[i].get("order")] = stop;
       }
