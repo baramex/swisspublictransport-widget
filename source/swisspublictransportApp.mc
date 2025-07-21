@@ -50,7 +50,10 @@ class swisspublictransportApp extends Application.AppBase {
       Position.LOCATION_CONTINUOUS,
       method(:onPosition)
     );
-    onPosition(Position.getInfo());
+    var info = Position.getInfo();
+    if(info.when != null && info.when.subtract(Time.now()).value() < 5 * 60) {
+        onPosition(info);
+    }
   }
 
   // onStop() is called when your application is exiting
