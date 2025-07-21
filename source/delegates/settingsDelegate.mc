@@ -17,6 +17,7 @@ class SettingsDelegate extends WatchUi.MenuInputDelegate {
         else {
             StorageUtils.removeFromFavorites(stop.ref);
         }
+        // Test: more than 4 favorites ? -> show toast
     }
     else if(item == :glance) {
         StorageUtils.setGlanceStop(stop);
