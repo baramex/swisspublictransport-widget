@@ -12,6 +12,7 @@ class App extends Application.AppBase {
     DISPLAY,
   }
 
+    var view;
   var timer;
 
   var position as Position.Location?;
@@ -72,7 +73,7 @@ class App extends Application.AppBase {
 
   // Return the initial view of your application here
   function getInitialView() as [Views] or [Views, InputDelegates] {
-    var view = new MainView();
+    view = new MainView();
     var delegate = new NavDelegate(view);
     return [view, delegate];
   }
@@ -152,7 +153,7 @@ class App extends Application.AppBase {
         null,
         method(:onDepartures)
       );
-    } else if (WatchUi.getCurrentView()[0] instanceof MainView) {
+    } else if (view != null) {
       WatchUi.requestUpdate();
     }
   }
@@ -163,8 +164,6 @@ class App extends Application.AppBase {
       return;
     }
     departures = Formatter.getDeparturesFromData(data);
-
-    var view = WatchUi.getCurrentView()[0];
 
       if (departureGroups.size() > 0) {
         for (var i = 0; i < departureGroups.size(); i++) {
@@ -197,11 +196,9 @@ class App extends Application.AppBase {
         if (departureGroups.get(i).size() == 0) {
           groupRef.remove(groupRef.keys()[groupRef.values().indexOf(i)]);
           departureGroups.remove(i);
-          if(view instanceof MainView) {
-            if (view.verticalScrollBar != null) {
-                if (i < view.verticalScrollBar.position) {
-                view.verticalScrollBar.position--;
-                }
+          if (view.verticalScrollBar != null) {
+            if (i < view.verticalScrollBar.position) {
+              view.verticalScrollBar.position--;
             }
           }
         }
@@ -224,7 +221,6 @@ class App extends Application.AppBase {
         pos++;
       }
 
-        if(view instanceof MainView) {
       if (departureGroups.size() > 2) {
         var currentPosition = 0;
         if (view.verticalScrollBar != null) {
@@ -245,7 +241,6 @@ class App extends Application.AppBase {
       } else {
         view.verticalScrollBar = null;
       }
-        }
 
     if (appState == GET_DEPARTURES) {
       appState = DISPLAY;
@@ -254,9 +249,8 @@ class App extends Application.AppBase {
         timer.start(self.method(:onTimer), 15000, true);
       }
     }
-
-    if (view instanceof MainView) {
-        WatchUi.requestUpdate();
+    if (view != null) {
+      WatchUi.requestUpdate();
     }
 
     System.println("got departures");
@@ -303,8 +297,7 @@ class App extends Application.AppBase {
       updateDepartures(true);
     }
 
-    var view = WatchUi.getCurrentView()[0];
-    if (view instanceof MainView) {
+    if (view != null) {
       if (stops.size() > 1) {
         view.horizontalScrollBar = new HorizontalScrollBar({
           :length => stops.size(),
@@ -326,10 +319,9 @@ class App extends Application.AppBase {
     if (position == null || position.toDegrees().size() < 2) {
       return;
     }
-    var view = WatchUi.getCurrentView()[0];
     if (appState == GET_LOCATION) {
       appState = GET_STOPS;
-      if (view instanceof MainView) {
+      if (view != null) {
         WatchUi.requestUpdate();
       }
     }
@@ -343,7 +335,7 @@ class App extends Application.AppBase {
         { "lat" => position.toDegrees()[0], "lon" => position.toDegrees()[1] },
         method(:onStops)
       );
-    } else if (view instanceof MainView) {
+    } else if (view != null) {
       WatchUi.requestUpdate();
     }
   }
