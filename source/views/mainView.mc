@@ -81,11 +81,17 @@ class MainView extends WatchUi.View {
       if (azimuth == null) {
         azimuth = 0.0;
       }
-      var angle = PositionUtils.getAngle(app.position, stopLocation) - azimuth;
-      drawArrow(dc, angle);
 
-      var distance = PositionUtils.getDistance(app.position, stopLocation);
-      drawDistanceText(dc, Math.round(distance).toNumber() + "m");
+      if(stop.favorite) {
+        drawFavoriteIcon(dc);
+      }
+      else {
+        var angle = PositionUtils.getAngle(app.position, stopLocation) - azimuth;
+        drawArrow(dc, angle);
+
+        var distance = PositionUtils.getDistance(app.position, stopLocation);
+        drawDistanceText(dc, Math.round(distance).toNumber() + "m");
+      }
 
       if (horizontalScrollBar != null) {
         horizontalScrollBar.draw(dc);
@@ -387,6 +393,33 @@ class MainView extends WatchUi.View {
     var y4 = y - 6 * Math.sin(angle - Math.PI / 2);
     dc.drawLine(x2, y2, x3, y3);
     dc.drawLine(x2, y2, x4, y4);
+  }
+
+  (:anyOctogonal)
+  function drawFavoriteIcon(dc) {
+    dc.setColor(Graphics.COLOR_YELLOW, Graphics.COLOR_YELLOW);
+    dc.fillCircle(roundCenterX, roundCenterY, roundRadius);
+    dc.drawText(
+      roundCenterX,
+      roundCenterY,
+      Graphics.FONT_LARGE,
+      "★",
+      Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
+    );
+  }
+
+  (:anyRound)
+  function drawFavoriteIcon(dc) {
+    dc.setColor(Graphics.COLOR_YELLOW, Graphics.COLOR_YELLOW);
+    var x = dc.getWidth() / 2 - 25;
+    var y = dc.getHeight() * 0.15;
+    dc.drawText(
+      x,
+      y,
+      Graphics.FONT_LARGE,
+      "★",
+      Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
+    );
   }
 
   (:smallOctogonal)
