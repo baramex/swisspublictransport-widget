@@ -39,7 +39,8 @@ class NavDelegate extends WatchUi.BehaviorDelegate {
         settingsMenu.setTitle(stop.name);
         settingsMenu.addItem(stop.favorite ? Rez.Strings.RemoveFromFavorites : Rez.Strings.AddToFavorites, :favorite);
         settingsMenu.addItem(Rez.Strings.SetAsGlanceStop, :glance);
-        var delegate = new SettingsDelegate();
+        settingsMenu.addItem(Rez.Strings.ShowOnMap, :map);
+        var delegate = new SettingsDelegate(stop);
         WatchUi.pushView(
           settingsMenu,
             delegate,

@@ -5,7 +5,7 @@ class StorageUtils {
     typedef StopObject as Dictionary<String, Number or String or Boolean>;
 
     static function getFavorites() as Dictionary<Number, StopObject> {
-        var favorites = Storage.getValue("favorites") as Dictionary<Number, StopObject>?;
+        var favorites = Application.Storage.getValue("favorites") as Dictionary<Number, StopObject>?;
         if (favorites == null) {
             return ({});
         }
@@ -16,7 +16,7 @@ class StorageUtils {
         var favorites = getFavorites();
         if(!favorites.hasKey(stop.ref)) {
             favorites.put(stop.ref, stop.toDictionary());
-            Storage.setValue("favorites", favorites);
+            Application.Storage.setValue("favorites", favorites);
         }
     }
 
@@ -24,11 +24,16 @@ class StorageUtils {
         var favorites = getFavorites();
         if (favorites.hasKey(stopRef)) {
             favorites.remove(stopRef);
-            Storage.setValue("favorites", favorites);
+            Application.Storage.setValue("favorites", favorites);
         }
     }
 
     static function setGlanceStop(stop as Stop) {
-        Storage.setValue("glanceStop", stop.toDictionary());
+        Application.Storage.setValue("glanceStop", stop.toDictionary());
+    }
+
+    static function getFavoriteCount() as Number {
+        var favorites = getFavorites();
+        return favorites.size();
     }
 }

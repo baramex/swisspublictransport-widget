@@ -9,4 +9,6 @@
     <string id="AddToFavorites">Ajouter aux favoris</string>
     <string id="RemoveFromFavorites">Retirer des favoris</string>
     <string id="SetAsGlanceStop">Définir comme arrêt de vue</string>
+    <string id="ShowOnMap">Afficher sur la carte</string>
+    <string id="FavoritesLimitReached">Vous ne pouvez pas avoir plus de 4 favoris</string>
 </strings>
