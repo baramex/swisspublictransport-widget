@@ -4,15 +4,13 @@ import Toybox.WatchUi;
 import Toybox.Position;
 import Toybox.Time;
 
-class swisspublictransportApp extends Application.AppBase {
+class App extends Application.AppBase {
   enum AppState {
     GET_LOCATION,
     GET_STOPS,
     GET_DEPARTURES,
     DISPLAY,
   }
-
-  var view;
 
   var timer;
 
@@ -54,6 +52,9 @@ class swisspublictransportApp extends Application.AppBase {
     if(info.when != null && info.when.subtract(Time.now()).value() < 5 * 60) {
         onPosition(info);
     }
+    else {
+        importFavoriteStops();
+    }
   }
 
   // onStop() is called when your application is exiting
@@ -71,14 +72,66 @@ class swisspublictransportApp extends Application.AppBase {
 
   // Return the initial view of your application here
   function getInitialView() as [Views] or [Views, InputDelegates] {
-    view = new swisspublictransportView();
+    var view = new MainView();
     var delegate = new NavDelegate(view);
     return [view, delegate];
   }
 
-  function onActive(state) as Void {}
+  function onActive(state) as Void {
+    // start timer
+  }
 
-  function onInactive(state) as Void {}
+  function onInactive(state) as Void {
+    // stop timer
+  }
+
+  function importFavoriteStops() as Void {
+    var favStops = StorageUtils.getFavorites();
+    if(favStops.size() == 0) {
+        return;
+    }
+    if(stops == null) {
+        stops = ({}) as Dictionary<Number, Stop>;
+    }
+    for(var i = 0; i < favStops.size(); i++) {
+      var stopData = favStops.get(i);
+      var stop = Stop.fromDictionary(stopData);
+      stops.put(stops.size(), stop);
+    }
+    if(currentStop == null) {
+        currentStop = 0;
+        appState = GET_DEPARTURES;
+        updateDepartures(true);
+    }
+    reorderStops();
+  }
+
+  function reorderStops() {
+    if(position == null || stops == null) {
+      return;
+    }
+    var currentStopRef = currentStop != null ? stops.get(currentStop).ref : null;
+    for(var i = 0; i < stops.size(); i++) {
+        for(var y = 0; y < stops.size() - i; y++) {
+            var stop1 = stops.get(y);
+            var stop2 = stops.get(y + 1);
+            if(stop1 == null || stop2 == null) {
+                continue;
+            }
+            var dist1 = PositionUtils.getDistance(position, stop1.getLocation());
+            var dist2 = PositionUtils.getDistance(position, stop2.getLocation());
+            if(dist1 > dist2) {
+                stops.put(y, stop2);
+                stops.put(y + 1, stop1);
+                if(currentStopRef == stop1.ref) {
+                    currentStop = y + 1;
+                } else if(currentStopRef == stop2.ref) {
+                    currentStop = y;
+                }
+            }
+        }
+    }
+  }
 
   function onTimer() as Void {
     updateDepartures(false);
@@ -99,8 +152,8 @@ class swisspublictransportApp extends Application.AppBase {
         null,
         method(:onDepartures)
       );
-    } else if (view != null) {
-      view.requestUpdate();
+    } else if (WatchUi.getCurrentView()[0] instanceof MainView) {
+      WatchUi.getCurrentView()[0].requestUpdate();
     }
   }
 
@@ -111,7 +164,8 @@ class swisspublictransportApp extends Application.AppBase {
     }
     departures = Formatter.getDeparturesFromData(data);
 
-    if (view != null) {
+    var view = WatchUi.getCurrentView()[0];
+
       if (departureGroups.size() > 0) {
         for (var i = 0; i < departureGroups.size(); i++) {
           departureGroups.put(i, {});
@@ -143,9 +197,11 @@ class swisspublictransportApp extends Application.AppBase {
         if (departureGroups.get(i).size() == 0) {
           groupRef.remove(groupRef.keys()[groupRef.values().indexOf(i)]);
           departureGroups.remove(i);
-          if (view.verticalScrollBar != null) {
-            if (i < view.verticalScrollBar.position) {
-              view.verticalScrollBar.position--;
+          if(view instanceof MainView) {
+            if (view.verticalScrollBar != null) {
+                if (i < view.verticalScrollBar.position) {
+                view.verticalScrollBar.position--;
+                }
             }
           }
         }
@@ -168,6 +224,7 @@ class swisspublictransportApp extends Application.AppBase {
         pos++;
       }
 
+        if(view instanceof MainView) {
       if (departureGroups.size() > 2) {
         var currentPosition = 0;
         if (view.verticalScrollBar != null) {
@@ -188,7 +245,7 @@ class swisspublictransportApp extends Application.AppBase {
       } else {
         view.verticalScrollBar = null;
       }
-    }
+        }
 
     if (appState == GET_DEPARTURES) {
       appState = DISPLAY;
@@ -197,7 +254,8 @@ class swisspublictransportApp extends Application.AppBase {
         timer.start(self.method(:onTimer), 15000, true);
       }
     }
-    if (view != null) {
+
+    if (view instanceof MainView) {
       view.requestUpdate();
     }
 
@@ -213,6 +271,7 @@ class swisspublictransportApp extends Application.AppBase {
     if (currentStop != null) {
       oldStopRef = stops.get(currentStop);
     }
+    var noStops = stops == null;
     stops = Formatter.getStopsFromData(data);
     if (oldStopRef != null) {
       var found = false;
@@ -230,13 +289,22 @@ class swisspublictransportApp extends Application.AppBase {
         groupRef = {};
       }
     }
+
+    if(appState == GET_STOPS && noStops) {
+        importFavoriteStops();
+    }
+    else if(StorageUtils.getFavoriteCount() > 0) {
+        reorderStops();
+    }
+
     if (currentStop == null && stops.size() > 0) {
       currentStop = 0;
       appState = GET_DEPARTURES;
       updateDepartures(true);
     }
 
-    if (view != null) {
+    var view = WatchUi.getCurrentView()[0];
+    if (view instanceof MainView) {
       if (stops.size() > 1) {
         view.horizontalScrollBar = new HorizontalScrollBar({
           :length => stops.size(),
@@ -258,9 +326,10 @@ class swisspublictransportApp extends Application.AppBase {
     if (position == null || position.toDegrees().size() < 2) {
       return;
     }
+    var view = WatchUi.getCurrentView()[0];
     if (appState == GET_LOCATION) {
       appState = GET_STOPS;
-      if (view != null) {
+      if (view instanceof MainView) {
         view.requestUpdate();
       }
     }
@@ -274,12 +343,12 @@ class swisspublictransportApp extends Application.AppBase {
         { "lat" => position.toDegrees()[0], "lon" => position.toDegrees()[1] },
         method(:onStops)
       );
-    } else if (view != null) {
+    } else if (view instanceof MainView) {
       view.requestUpdate();
     }
   }
 }
 
-function getApp() as swisspublictransportApp {
-  return Application.getApp() as swisspublictransportApp;
+function getApp() as App {
+  return Application.getApp() as App;
 }

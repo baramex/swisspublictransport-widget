@@ -5,7 +5,7 @@ import Toybox.Position;
 import Toybox.Math;
 import Toybox.Sensor;
 
-class swisspublictransportView extends WatchUi.View {
+class MainView extends WatchUi.View {
   var type = "main";
 
   var stateText;

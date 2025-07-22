@@ -33,4 +33,14 @@ class Stop {
             :format => :degrees
         });
     }
+
+    static function fromDictionary(data as StorageUtils.StopObject) as Stop {
+        return new Stop(
+            data.get("ref") as Number,
+            data.get("name") as String,
+            data.get("lat") as Number,
+            data.get("lon") as Number,
+            data.get("favorite") as Boolean
+        );
+    }
 }
