@@ -153,7 +153,7 @@ class App extends Application.AppBase {
         method(:onDepartures)
       );
     } else if (WatchUi.getCurrentView()[0] instanceof MainView) {
-      WatchUi.getCurrentView()[0].requestUpdate();
+      WatchUi.requestUpdate();
     }
   }
 
@@ -256,7 +256,7 @@ class App extends Application.AppBase {
     }
 
     if (view instanceof MainView) {
-      view.requestUpdate();
+        WatchUi.requestUpdate();
     }
 
     System.println("got departures");
@@ -314,7 +314,7 @@ class App extends Application.AppBase {
         view.horizontalScrollBar = null;
       }
 
-      view.requestUpdate();
+      WatchUi.requestUpdate();
     }
 
     System.println("got stops");
@@ -330,7 +330,7 @@ class App extends Application.AppBase {
     if (appState == GET_LOCATION) {
       appState = GET_STOPS;
       if (view instanceof MainView) {
-        view.requestUpdate();
+        WatchUi.requestUpdate();
       }
     }
     if (
@@ -344,7 +344,7 @@ class App extends Application.AppBase {
         method(:onStops)
       );
     } else if (view instanceof MainView) {
-      view.requestUpdate();
+      WatchUi.requestUpdate();
     }
   }
 }
