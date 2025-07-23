@@ -3,5 +3,7 @@ project.manifest = manifest.xml
 base.excludeAnnotations = smallOctogonal;anyOctogonal;anyRound;largeOctogonal
 instinct2s.excludeAnnotations = anyRound;largeOctogonal
 instinct2.excludeAnnotations = smallOctogonal;anyRound
+descentg1.excludeAnnotations = smallOctogonal;anyRound
+instincte45mm.excludeAnnotations = smallOctogonal;anyRound
 instinct2x.excludeAnnotations = smallOctogonal;anyRound
 round.excludeAnnotations = smallOctogonal;anyOctogonal;largeOctogonal
