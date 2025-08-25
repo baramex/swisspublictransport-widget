@@ -70,7 +70,7 @@ class App extends Application.AppBase {
       Position.LOCATION_DISABLE,
       method(:onPosition)
     );
-    if (timer) {
+    if (timer != null) {
       timer.stop();
       timer = null;
     }
@@ -83,12 +83,24 @@ class App extends Application.AppBase {
     return [view, delegate];
   }
 
+  function getGlanceView() as [WatchUi.GlanceView] or
+    [WatchUi.GlanceView, GlanceViewDelegate] or
+    Null {
+    return [new GlanceView()];
+  }
+
   function onActive(state) as Void {
-    // start timer
+    if (timer == null) {
+      timer = new Timer.Timer();
+      timer.start(self.method(:onTimer), 15000, true);
+    }
   }
 
   function onInactive(state) as Void {
-    // stop timer
+    if (timer != null) {
+      timer.stop();
+      timer = null;
+    }
   }
 
   function reorderStops() {
@@ -119,10 +131,12 @@ class App extends Application.AppBase {
     }
   }
 
+  (:glance)
   function onTimer() as Void {
     updateDepartures(false);
   }
 
+  (:glance)
   function updateDepartures(force as Boolean?) {
     if (currentStop == null) {
       return;
@@ -143,6 +157,7 @@ class App extends Application.AppBase {
     }
   }
 
+  (:glance)
   function onDepartures(responseCode as Number, data as Dictionary?) as Void {
     if (responseCode != 200) {
       System.println("Error getting departures");

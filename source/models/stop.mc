@@ -1,6 +1,7 @@
 import Toybox.Lang;
 import Toybox.Position;
 
+(:glance)
 class Stop {
     public var ref as Number;
     public var name as String;

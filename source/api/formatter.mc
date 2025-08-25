@@ -67,6 +67,7 @@ class Formatter {
     return stops;
   }
 
+    (:glance)
   static function getDeparturesFromData(
     data as Dictionary?
   ) as Dictionary<Number, Departure> {
