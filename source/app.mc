@@ -53,7 +53,13 @@ class App extends Application.AppBase {
     if (info.when != null && info.when.subtract(Time.now()).value() < 5 * 60) {
       onPosition(info);
     } else {
-      importFavoriteStops();
+      Formatter.getStopsFromData(null, StorageUtils.getFavorites());
+      reorderStops();
+      if (currentStop == null) {
+        currentStop = 0;
+        appState = GET_DEPARTURES;
+        updateDepartures(true);
+      }
     }
   }
 
@@ -83,27 +89,6 @@ class App extends Application.AppBase {
 
   function onInactive(state) as Void {
     // stop timer
-  }
-
-  function importFavoriteStops() as Void {
-    var favStops = StorageUtils.getFavorites();
-    if (favStops.size() == 0) {
-      return;
-    }
-    if (stops == null) {
-      stops = ({}) as Dictionary<Number, Stop>;
-    }
-    for (var i = 0; i < favStops.size(); i++) {
-      var stopData = favStops.values()[i];
-      var stop = Stop.fromDictionary(stopData);
-      stops.put(stops.size(), stop);
-    }
-    if (currentStop == null) {
-      currentStop = 0;
-      appState = GET_DEPARTURES;
-      updateDepartures(true);
-    }
-    reorderStops();
   }
 
   function reorderStops() {

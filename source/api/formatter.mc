@@ -60,6 +60,7 @@ class Formatter {
             continue;
           }
           stops[a] = Stop.fromDictionary(favorites.values()[i]);
+          break;
         }
       }
     }
