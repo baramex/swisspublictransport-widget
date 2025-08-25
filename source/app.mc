@@ -12,7 +12,7 @@ class App extends Application.AppBase {
     DISPLAY,
   }
 
-    var view;
+  var view;
   var timer;
 
   var position as Position.Location?;
@@ -50,11 +50,10 @@ class App extends Application.AppBase {
       method(:onPosition)
     );
     var info = Position.getInfo();
-    if(info.when != null && info.when.subtract(Time.now()).value() < 5 * 60) {
-        onPosition(info);
-    }
-    else {
-        importFavoriteStops();
+    if (info.when != null && info.when.subtract(Time.now()).value() < 5 * 60) {
+      onPosition(info);
+    } else {
+      importFavoriteStops();
     }
   }
 
@@ -88,49 +87,50 @@ class App extends Application.AppBase {
 
   function importFavoriteStops() as Void {
     var favStops = StorageUtils.getFavorites();
-    if(favStops.size() == 0) {
-        return;
+    if (favStops.size() == 0) {
+      return;
     }
-    if(stops == null) {
-        stops = ({}) as Dictionary<Number, Stop>;
+    if (stops == null) {
+      stops = ({}) as Dictionary<Number, Stop>;
     }
-    for(var i = 0; i < favStops.size(); i++) {
-      var stopData = favStops.get(i);
+    for (var i = 0; i < favStops.size(); i++) {
+      var stopData = favStops.values()[i];
       var stop = Stop.fromDictionary(stopData);
       stops.put(stops.size(), stop);
     }
-    if(currentStop == null) {
-        currentStop = 0;
-        appState = GET_DEPARTURES;
-        updateDepartures(true);
+    if (currentStop == null) {
+      currentStop = 0;
+      appState = GET_DEPARTURES;
+      updateDepartures(true);
     }
     reorderStops();
   }
 
   function reorderStops() {
-    if(position == null || stops == null) {
+    if (position == null || stops == null) {
       return;
     }
-    var currentStopRef = currentStop != null ? stops.get(currentStop).ref : null;
-    for(var i = 0; i < stops.size(); i++) {
-        for(var y = 0; y < stops.size() - i; y++) {
-            var stop1 = stops.get(y);
-            var stop2 = stops.get(y + 1);
-            if(stop1 == null || stop2 == null) {
-                continue;
-            }
-            var dist1 = PositionUtils.getDistance(position, stop1.getLocation());
-            var dist2 = PositionUtils.getDistance(position, stop2.getLocation());
-            if(dist1 > dist2) {
-                stops.put(y, stop2);
-                stops.put(y + 1, stop1);
-                if(currentStopRef == stop1.ref) {
-                    currentStop = y + 1;
-                } else if(currentStopRef == stop2.ref) {
-                    currentStop = y;
-                }
-            }
+    var currentStopRef =
+      currentStop != null ? stops.get(currentStop).ref : null;
+    for (var i = 0; i < stops.size(); i++) {
+      for (var y = 0; y < stops.size() - i; y++) {
+        var stop1 = stops.get(y);
+        var stop2 = stops.get(y + 1);
+        if (stop1 == null || stop2 == null) {
+          continue;
         }
+        var dist1 = PositionUtils.getDistance(position, stop1.getLocation());
+        var dist2 = PositionUtils.getDistance(position, stop2.getLocation());
+        if (dist1 > dist2) {
+          stops.put(y, stop2);
+          stops.put(y + 1, stop1);
+          if (currentStopRef == stop1.ref) {
+            currentStop = y + 1;
+          } else if (currentStopRef == stop2.ref) {
+            currentStop = y;
+          }
+        }
+      }
     }
   }
 
@@ -165,82 +165,80 @@ class App extends Application.AppBase {
     }
     departures = Formatter.getDeparturesFromData(data);
 
-      if (departureGroups.size() > 0) {
-        for (var i = 0; i < departureGroups.size(); i++) {
-          departureGroups.put(i, {});
-        }
+    if (departureGroups.size() > 0) {
+      for (var i = 0; i < departureGroups.size(); i++) {
+        departureGroups.put(i, {});
       }
-      for (var i = 0; i < departures.size(); i++) {
-        var departure = departures.get(i) as Departure;
-        if (departure.cancelled || departure.deviation) {
-          continue;
-        }
-        var index = groupRef.get(
+    }
+    for (var i = 0; i < departures.size(); i++) {
+      var departure = departures.get(i) as Departure;
+      if (departure.cancelled || departure.deviation) {
+        continue;
+      }
+      var index = groupRef.get(
+        departure.lineName + departure.destinationName + departure.platformName
+      );
+      if (index == null) {
+        index = departureGroups.size();
+        groupRef.put(
           departure.lineName +
             departure.destinationName +
-            departure.platformName
+            departure.platformName,
+          index
         );
-        if (index == null) {
-          index = departureGroups.size();
-          groupRef.put(
-            departure.lineName +
-              departure.destinationName +
-              departure.platformName,
-            index
-          );
-          departureGroups.put(index, {});
-        }
-        departureGroups.get(index).put(departure.order, departure);
+        departureGroups.put(index, {});
       }
-      for (var i = 0; i < departureGroups.size(); i++) {
-        if (departureGroups.get(i).size() == 0) {
-          groupRef.remove(groupRef.keys()[groupRef.values().indexOf(i)]);
-          departureGroups.remove(i);
-          if (view.verticalScrollBar != null) {
-            if (i < view.verticalScrollBar.position) {
-              view.verticalScrollBar.position--;
-            }
-          }
-        }
-      }
-      var pos = 0;
-      while (pos < departureGroups.size()) {
-        var el = departureGroups.get(pos);
-        if (el == null) {
-          var nextIndex = pos + 1;
-          while (departureGroups.get(nextIndex) == null) {
-            nextIndex++;
-          }
-          departureGroups.put(pos, departureGroups.get(nextIndex));
-          groupRef.put(
-            groupRef.keys()[groupRef.values().indexOf(nextIndex)],
-            pos
-          );
-          departureGroups.remove(nextIndex);
-        }
-        pos++;
-      }
-
-      if (departureGroups.size() > 2) {
-        var currentPosition = 0;
+      departureGroups.get(index).put(departure.order, departure);
+    }
+    for (var i = 0; i < departureGroups.size(); i++) {
+      if (departureGroups.get(i).size() == 0) {
+        groupRef.remove(groupRef.keys()[groupRef.values().indexOf(i)]);
+        departureGroups.remove(i);
         if (view.verticalScrollBar != null) {
-          currentPosition = view.verticalScrollBar.position;
+          if (i < view.verticalScrollBar.position) {
+            view.verticalScrollBar.position--;
+          }
         }
-
-        if (currentPosition > departureGroups.size() - 2) {
-          currentPosition = departureGroups.size() - 2;
-        }
-        if (currentPosition < 0) {
-          currentPosition = 0;
-        }
-
-        view.verticalScrollBar = new VerticalScrollBar({
-          :length => departureGroups.size() - 1,
-          :position => currentPosition,
-        });
-      } else {
-        view.verticalScrollBar = null;
       }
+    }
+    var pos = 0;
+    while (pos < departureGroups.size()) {
+      var el = departureGroups.get(pos);
+      if (el == null) {
+        var nextIndex = pos + 1;
+        while (departureGroups.get(nextIndex) == null) {
+          nextIndex++;
+        }
+        departureGroups.put(pos, departureGroups.get(nextIndex));
+        groupRef.put(
+          groupRef.keys()[groupRef.values().indexOf(nextIndex)],
+          pos
+        );
+        departureGroups.remove(nextIndex);
+      }
+      pos++;
+    }
+
+    if (departureGroups.size() > 2) {
+      var currentPosition = 0;
+      if (view.verticalScrollBar != null) {
+        currentPosition = view.verticalScrollBar.position;
+      }
+
+      if (currentPosition > departureGroups.size() - 2) {
+        currentPosition = departureGroups.size() - 2;
+      }
+      if (currentPosition < 0) {
+        currentPosition = 0;
+      }
+
+      view.verticalScrollBar = new VerticalScrollBar({
+        :length => departureGroups.size() - 1,
+        :position => currentPosition,
+      });
+    } else {
+      view.verticalScrollBar = null;
+    }
 
     if (appState == GET_DEPARTURES) {
       appState = DISPLAY;
@@ -265,8 +263,7 @@ class App extends Application.AppBase {
     if (currentStop != null) {
       oldStopRef = stops.get(currentStop);
     }
-    var noStops = stops == null;
-    stops = Formatter.getStopsFromData(data);
+    stops = Formatter.getStopsFromData(data, StorageUtils.getFavorites());
     if (oldStopRef != null) {
       var found = false;
       for (var i = 0; i < stops.size(); i++) {
@@ -284,11 +281,8 @@ class App extends Application.AppBase {
       }
     }
 
-    if(appState == GET_STOPS && noStops) {
-        importFavoriteStops();
-    }
-    else if(StorageUtils.getFavoriteCount() > 0) {
-        reorderStops();
+    if (StorageUtils.getFavoriteCount() > 0) {
+      reorderStops();
     }
 
     if (currentStop == null && stops.size() > 0) {

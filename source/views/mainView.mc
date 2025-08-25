@@ -16,10 +16,10 @@ class MainView extends WatchUi.View {
   var azimuth as Float?;
 
   const gettingPosition = WatchUi.loadResource(Rez.Strings.GettingPosition);
-    const gettingStops = WatchUi.loadResource(Rez.Strings.GettingStops);
-    const gettingDepartures = WatchUi.loadResource(Rez.Strings.GettingDepartures);
-    const noStopFound = WatchUi.loadResource(Rez.Strings.NoStopFound);
-    const noDepartureFound = WatchUi.loadResource(Rez.Strings.NoDepartureFound);
+  const gettingStops = WatchUi.loadResource(Rez.Strings.GettingStops);
+  const gettingDepartures = WatchUi.loadResource(Rez.Strings.GettingDepartures);
+  const noStopFound = WatchUi.loadResource(Rez.Strings.NoStopFound);
+  const noDepartureFound = WatchUi.loadResource(Rez.Strings.NoDepartureFound);
 
   (:smallOctogonal)
   const stateLocY = 64;
@@ -82,11 +82,11 @@ class MainView extends WatchUi.View {
         azimuth = 0.0;
       }
 
-      if(stop.favorite) {
+      if (stop.favorite) {
         drawFavoriteIcon(dc);
-      }
-      else {
-        var angle = PositionUtils.getAngle(app.position, stopLocation) - azimuth;
+      } else {
+        var angle =
+          PositionUtils.getAngle(app.position, stopLocation) - azimuth;
         drawArrow(dc, angle);
 
         var distance = PositionUtils.getDistance(app.position, stopLocation);
@@ -116,7 +116,7 @@ class MainView extends WatchUi.View {
           :lineColor => ldepartures.values()[0].lineColor,
           :lineTextColor => ldepartures.values()[0].lineTextColor,
           :platformName => ldepartures.values()[0].platformName,
-          :locX => getDepartureX(dc, i-pos),
+          :locX => getDepartureX(dc, i - pos),
           :locY => getDepartureY(dc) + (i - pos) * getDepartureHeight(dc),
           :width => getDepartureWidth(dc, i - pos),
           :height => getDepartureHeight(dc),
@@ -192,7 +192,7 @@ class MainView extends WatchUi.View {
       :locY => WatchUi.LAYOUT_VALIGN_CENTER,
       :justification => Graphics.TEXT_JUSTIFY_CENTER |
       Graphics.TEXT_JUSTIFY_VCENTER,
-      :font => Graphics.FONT_SMALL
+      :font => Graphics.FONT_SMALL,
     });
   }
 
@@ -218,12 +218,24 @@ class MainView extends WatchUi.View {
   (:anyOctogonal)
   function drawDistanceText(dc as Dc, text as String) {
     dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
-    dc.drawText(distanceLocX, distanceLocY, Graphics.FONT_TINY, text, Graphics.TEXT_JUSTIFY_CENTER);
+    dc.drawText(
+      distanceLocX,
+      distanceLocY,
+      Graphics.FONT_TINY,
+      text,
+      Graphics.TEXT_JUSTIFY_CENTER
+    );
   }
   (:anyRound)
   function drawDistanceText(dc as Dc, text as String) {
     dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
-    dc.drawText(dc.getWidth() / 2, dc.getHeight() * 0.1, Graphics.FONT_TINY, text, Graphics.TEXT_JUSTIFY_LEFT);
+    dc.drawText(
+      dc.getWidth() / 2,
+      dc.getHeight() * 0.1,
+      Graphics.FONT_TINY,
+      text,
+      Graphics.TEXT_JUSTIFY_LEFT
+    );
   }
 
   (:smallOctogonal)
@@ -411,7 +423,7 @@ class MainView extends WatchUi.View {
   (:anyRound)
   function drawFavoriteIcon(dc) {
     dc.setColor(Graphics.COLOR_YELLOW, Graphics.COLOR_YELLOW);
-    var x = dc.getWidth() / 2 - 25;
+    var x = dc.getWidth() / 2;
     var y = dc.getHeight() * 0.15;
     dc.drawText(
       x,
@@ -466,11 +478,10 @@ class MainView extends WatchUi.View {
   }
   (:anyRound)
   function getDepartureX(dc, i) {
-    if(i == 1) {
-        return dc.getWidth() * 0.15;
-    }
-    else {
-        return 6;
+    if (i == 1) {
+      return dc.getWidth() * 0.15;
+    } else {
+      return 6;
     }
   }
 

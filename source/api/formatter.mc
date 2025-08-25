@@ -3,11 +3,39 @@ import Toybox.Time;
 
 class Formatter {
   static function getStopsFromData(
-    data as Dictionary?
+    data as Dictionary?,
+    favorites as Dictionary<Number, StorageUtils.StopObject>
   ) as Dictionary<Number, Stop> {
     var stops = ({}) as Dictionary<Number, Stop>;
     if (data != null) {
+      var count = 0;
+      for (var i = 0; i < favorites.size(); i++) {
+        var exists = false;
+        for (var a = 0; a < data.size(); a++) {
+          if (favorites.values()[i].get("ref") == data[a].get("ref")) {
+            exists = true;
+            break;
+          }
+        }
+        if (!exists) {
+          count++;
+        }
+      }
+
       for (var i = 0; i < data.size(); i++) {
+        var exists = false;
+        for (var a = 0; a < favorites.size(); a++) {
+          if (favorites.values()[a].get("ref") == data[i].get("ref")) {
+            exists = true;
+            stops[data[i].get("order")] = Stop.fromDictionary(
+              favorites.values()[a]
+            );
+            break;
+          }
+        }
+        if (data[i].get("order") + count >= 5 || exists) {
+          continue;
+        }
         var stop = new Stop(
           data[i].get("ref"),
           data[i].get("name"),
@@ -16,6 +44,23 @@ class Formatter {
           false
         );
         stops[data[i].get("order")] = stop;
+      }
+    }
+    for (var i = 0; i < favorites.size(); i++) {
+      var exists = false;
+      for (var a = 0; a < data.size(); a++) {
+        if (favorites.values()[i].get("ref") == data[a].get("ref")) {
+          exists = true;
+          break;
+        }
+      }
+      if (!exists) {
+        for (var a = 0; a < 5; a++) {
+          if (stops.hasKey(a)) {
+            continue;
+          }
+          stops[a] = Stop.fromDictionary(favorites.values()[i]);
+        }
       }
     }
     return stops;

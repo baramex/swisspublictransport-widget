@@ -5,7 +5,6 @@ import Toybox.Lang;
 
 class NavDelegate extends WatchUi.BehaviorDelegate {
   var view;
-  var menuPressed = false;
 
   function initialize(_view) {
     BehaviorDelegate.initialize();
@@ -13,41 +12,28 @@ class NavDelegate extends WatchUi.BehaviorDelegate {
     view = _view;
   }
 
-  function onKeyPressed(keyEvent as WatchUi.KeyEvent) as Boolean {
-    if (keyEvent.getKey() == WatchUi.KEY_MENU) {
-      menuPressed = true;
-      new Timer.Timer().start(method(:onTimer), 1000, false);
+  function onMenu() as Boolean {
+    var app = getApp();
+    var stop =
+      app.stops != null && app.currentStop != null
+        ? app.stops[app.currentStop]
+        : null;
+    if (stop == null) {
+      return false;
     }
-    return false;
-  }
-
-  function onKeyReleased(keyEvent as WatchUi.KeyEvent) as Boolean {
-    if (keyEvent.getKey() == WatchUi.KEY_MENU) {
-      menuPressed = false;
-    }
-    return false;
-  }
-
-  function onTimer() as Void {
-    if(menuPressed) {
-        var app = getApp();
-        var stop = (app.stops != null && app.currentStop != null) ? app.stops[app.currentStop] : null;
-        if(stop == null) {
-            return;
-        }
-        var settingsMenu = new WatchUi.Menu();
-        settingsMenu.setTitle(stop.name);
-        settingsMenu.addItem(stop.favorite ? Rez.Strings.RemoveFromFavorites : Rez.Strings.AddToFavorites, :favorite);
-        settingsMenu.addItem(Rez.Strings.SetAsGlanceStop, :glance);
-        settingsMenu.addItem(Rez.Strings.ShowOnMap, :map);
-        var delegate = new SettingsDelegate(stop);
-        WatchUi.pushView(
-          settingsMenu,
-            delegate,
-            WatchUi.SLIDE_IMMEDIATE
-        );
-        menuPressed = false;
-    }
+    var settingsMenu = new WatchUi.Menu();
+    settingsMenu.setTitle(stop.name);
+    settingsMenu.addItem(
+      stop.favorite
+        ? Rez.Strings.RemoveFromFavorites
+        : Rez.Strings.AddToFavorites,
+      :favorite
+    );
+    settingsMenu.addItem(Rez.Strings.SetAsGlanceStop, :glance);
+    settingsMenu.addItem(Rez.Strings.ShowOnMap, :map);
+    var delegate = new SettingsDelegate(stop);
+    WatchUi.pushView(settingsMenu, delegate, WatchUi.SLIDE_IMMEDIATE);
+    return true;
   }
 
   function onNextPage() {
