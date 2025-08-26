@@ -79,14 +79,14 @@ class GlanceView extends WatchUi.GlanceView {
         }
         var angle =
           PositionUtils.getAngle(app.position, stop.getLocation()) - azimuth;
-        var x = dc.getWidth()-3;
+        var x = dc.getWidth()-5;
         var y = dc.getFontHeight(Graphics.FONT_TINY)/2;
         var x1 = x + 10 * Math.cos(angle);
         var y1 = y + 6 * Math.sin(angle);
         var x2 = x - 10 * Math.cos(angle);
         var y2 = y - 6 * Math.sin(angle);
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
-        dc.setPenWidth(3);
+        dc.setPenWidth(2);
         dc.drawLine(x1, y1, x2, y2);
         var x3 = x - 5 * Math.cos(angle + Math.PI / 2);
         var y3 = y - 3 * Math.sin(angle + Math.PI / 2);
@@ -101,7 +101,7 @@ class GlanceView extends WatchUi.GlanceView {
         );
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
         dc.drawText(
-          x - 7,
+          x - 10,
           y,
           Graphics.FONT_XTINY,
           Math.round(distance).toNumber() + "m",
