@@ -131,12 +131,10 @@ class App extends Application.AppBase {
     }
   }
 
-  (:glance)
   function onTimer() as Void {
     updateDepartures(false);
   }
 
-  (:glance)
   function updateDepartures(force as Boolean?) {
     if (currentStop == null) {
       return;
@@ -157,7 +155,6 @@ class App extends Application.AppBase {
     }
   }
 
-  (:glance)
   function onDepartures(responseCode as Number, data as Dictionary?) as Void {
     if (responseCode != 200) {
       System.println("Error getting departures");
@@ -194,9 +191,11 @@ class App extends Application.AppBase {
       if (departureGroups.get(i).size() == 0) {
         groupRef.remove(groupRef.keys()[groupRef.values().indexOf(i)]);
         departureGroups.remove(i);
-        if (view.verticalScrollBar != null) {
-          if (i < view.verticalScrollBar.position) {
-            view.verticalScrollBar.position--;
+        if (view != null) {
+          if (view.verticalScrollBar != null) {
+            if (i < view.verticalScrollBar.position) {
+              view.verticalScrollBar.position--;
+            }
           }
         }
       }
@@ -219,25 +218,27 @@ class App extends Application.AppBase {
       pos++;
     }
 
-    if (departureGroups.size() > 2) {
-      var currentPosition = 0;
-      if (view.verticalScrollBar != null) {
-        currentPosition = view.verticalScrollBar.position;
-      }
+    if (view != null) {
+      if (departureGroups.size() > 2) {
+        var currentPosition = 0;
+        if (view.verticalScrollBar != null) {
+          currentPosition = view.verticalScrollBar.position;
+        }
 
-      if (currentPosition > departureGroups.size() - 2) {
-        currentPosition = departureGroups.size() - 2;
-      }
-      if (currentPosition < 0) {
-        currentPosition = 0;
-      }
+        if (currentPosition > departureGroups.size() - 2) {
+          currentPosition = departureGroups.size() - 2;
+        }
+        if (currentPosition < 0) {
+          currentPosition = 0;
+        }
 
-      view.verticalScrollBar = new VerticalScrollBar({
-        :length => departureGroups.size() - 1,
-        :position => currentPosition,
-      });
-    } else {
-      view.verticalScrollBar = null;
+        view.verticalScrollBar = new VerticalScrollBar({
+          :length => departureGroups.size() - 1,
+          :position => currentPosition,
+        });
+      } else {
+        view.verticalScrollBar = null;
+      }
     }
 
     if (appState == GET_DEPARTURES) {
