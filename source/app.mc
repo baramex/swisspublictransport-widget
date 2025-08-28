@@ -326,7 +326,6 @@ class App extends Application.AppBase {
       lastStopsRequest == null ||
       Time.now().subtract(lastStopsRequest).value() > 10
     ) {
-      System.println(System.getDeviceSettings().partNumber);
       lastStopsRequest = Time.now();
       JsonTransaction.makeRequest(
         "/stops/nearby",
@@ -344,6 +343,7 @@ class App extends Application.AppBase {
   }
 }
 
+(:glance)
 function getApp() as App {
   return Application.getApp() as App;
 }
