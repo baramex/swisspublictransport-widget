@@ -20,6 +20,7 @@ class MainView extends WatchUi.View {
   const gettingDepartures = WatchUi.loadResource(Rez.Strings.GettingDepartures);
   const noStopFound = WatchUi.loadResource(Rez.Strings.NoStopFound);
   const noDepartureFound = WatchUi.loadResource(Rez.Strings.NoDepartureFound);
+  const error = WatchUi.loadResource(Rez.Strings.UnableToFetch);
 
   (:smallOctogonal)
   const stateLocY = 64;
@@ -58,6 +59,10 @@ class MainView extends WatchUi.View {
       stateText.setText(gettingDepartures);
     } else if (app.appState == app.DISPLAY) {
       stateText.setText("");
+    }
+
+    if(app.appState != app.DISPLAY && app.error != null) {
+        stateText.setText(error);
     }
 
     if (app.stops != null && app.stops.size() == 0) {

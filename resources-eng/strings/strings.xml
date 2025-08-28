@@ -5,4 +5,13 @@
     <string id="GettingPosition">Getting position...</string>
     <string id="GettingStops">Getting stops...</string>
     <string id="GettingDepartures">Getting departures...</string>
+    <string id="UnableToFetch">Unable to connect to the server</string>
+
+    <string id="NoStopSelected">No stop selected\nGetting position...</string>
+
+    <string id="AddToFavorites">Add to favorites</string>
+    <string id="RemoveFromFavorites">Remove from favorites</string>
+    <string id="SetAsGlanceStop">Set as glance stop</string>
+    <string id="ShowOnMap">Show on map</string>
+    <string id="FavoritesLimitReached">You cannot have more than 4 favorites</string>
 </strings>

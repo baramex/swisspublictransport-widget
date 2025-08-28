@@ -17,6 +17,7 @@ class App extends Application.AppBase {
 
   var position as Position.Location?;
   var appState as AppState = GET_LOCATION;
+  var error as Number?;
   var stops as Dictionary<Number, Stop>?;
   var departures as Dictionary<Number, Departure>?;
   var currentStop as Number?;
@@ -158,8 +159,10 @@ class App extends Application.AppBase {
   function onDepartures(responseCode as Number, data as Dictionary?) as Void {
     if (responseCode != 200) {
       System.println("Error getting departures");
+      error = responseCode;
       return;
     }
+    error = null;
     departures = Formatter.getDeparturesFromData(data);
 
     if (departureGroups.size() > 0) {
@@ -256,8 +259,10 @@ class App extends Application.AppBase {
   function onStops(responseCode as Number, data as Dictionary?) as Void {
     if (responseCode != 200) {
       System.println("Error getting stops");
+      error = responseCode;
       return;
     }
+    error = null;
     var oldStopRef = null;
     if (currentStop != null) {
       oldStopRef = stops.get(currentStop);

@@ -5,4 +5,13 @@
     <string id="GettingPosition">Abrufen der Position...</string>
     <string id="GettingStops">Abrufen von Haltestellen...</string>
     <string id="GettingDepartures">Abrufen der Abfahrten...</string>
+    <string id="UnableToFetch">Verbindung zum Server konnte nicht hergestellt werden</string>
+
+    <string id="NoStopSelected">Kein Halt ausgewählt\nPosition wird abgerufen...</string>
+
+    <string id="AddToFavorites">Zu Favoriten hinzufügen</string>
+    <string id="RemoveFromFavorites">Aus Favoriten entfernen</string>
+    <string id="SetAsGlanceStop">Als Schnellansicht-Halt festlegen</string>
+    <string id="ShowOnMap">Auf der Karte anzeigen</string>
+    <string id="FavoritesLimitReached">Sie können nicht mehr als 4 Favoriten haben</string>
 </strings>
