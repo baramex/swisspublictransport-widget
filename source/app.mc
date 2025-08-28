@@ -325,10 +325,16 @@ class App extends Application.AppBase {
       lastStopsRequest == null ||
       Time.now().subtract(lastStopsRequest).value() > 10
     ) {
+      System.println(System.getDeviceSettings().partNumber);
       lastStopsRequest = Time.now();
       JsonTransaction.makeRequest(
         "/stops/nearby",
-        { "lat" => position.toDegrees()[0], "lon" => position.toDegrees()[1] },
+        {
+          "lat" => position.toDegrees()[0],
+          "lon" => position.toDegrees()[1],
+          "user" => System.getDeviceSettings().uniqueIdentifier,
+          "device" => System.getDeviceSettings().partNumber,
+        },
         method(:onStops)
       );
     } else {
