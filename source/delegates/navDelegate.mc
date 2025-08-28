@@ -30,7 +30,9 @@ class NavDelegate extends WatchUi.BehaviorDelegate {
       :favorite
     );
     settingsMenu.addItem(Rez.Strings.SetAsGlanceStop, :glance);
-    settingsMenu.addItem(Rez.Strings.ShowOnMap, :map);
+    if (WatchUi has :MapView) {
+      settingsMenu.addItem(Rez.Strings.ShowOnMap, :map);
+    }
     var delegate = new SettingsDelegate(stop);
     WatchUi.pushView(settingsMenu, delegate, WatchUi.SLIDE_IMMEDIATE);
     return true;

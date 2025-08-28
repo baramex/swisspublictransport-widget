@@ -38,14 +38,15 @@ class SettingsDelegate extends WatchUi.MenuInputDelegate {
       var location = stop.getLocation();
       var map = new WatchUi.MapView();
       map.setMapVisibleArea(
-        location.getProjectedLocation((3 * Math.PI) / 4, 100),
-        location.getProjectedLocation(-Math.PI / 4, 100)
+        location.getProjectedLocation(-Math.PI / 4, 100),
+        location.getProjectedLocation((3 * Math.PI) / 4, 100)
       );
-      map.setScreenVisibleArea(0, 0, 1, 1);
-      map.setMapMode(WatchUi.MAP_MODE_BROWSE);
       var marker = new WatchUi.MapMarker(location);
       marker.setLabel(stop.name);
+      marker.setIcon(WatchUi.MAP_MARKER_ICON_PIN, 0, 0);
       map.setMapMarker(marker);
+      map.setMapMode(WatchUi.MAP_MODE_BROWSE);
+      map.setScreenVisibleArea(0, 0, System.getDeviceSettings().screenWidth, System.getDeviceSettings().screenHeight);
       WatchUi.pushView(map, null, WatchUi.SLIDE_IMMEDIATE);
     }
   }

@@ -55,7 +55,7 @@ class GlanceView extends WatchUi.GlanceView {
   function onUpdate(dc as Dc) {
     var app = getApp();
 
-    dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
+    dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
     if (app.currentStop == null) {
       dc.drawText(
         0,
@@ -73,7 +73,7 @@ class GlanceView extends WatchUi.GlanceView {
         stopData != null ? stopData.get("ref") == stop.ref : false;
 
       dc.drawText(
-        isSelected ? dc.getTextWidthInPixels("★", Graphics.FONT_TINY) + 3 : 0,
+        isSelected ? Drawables.star.getWidth() + 3 : 0,
         0,
         Graphics.FONT_TINY,
         stop.name,
@@ -81,8 +81,7 @@ class GlanceView extends WatchUi.GlanceView {
       );
 
       if (isSelected) {
-        dc.setColor(Graphics.COLOR_YELLOW, Graphics.COLOR_YELLOW);
-        dc.drawText(0, 0, Graphics.FONT_TINY, "★", Graphics.TEXT_JUSTIFY_LEFT);
+        dc.drawBitmap(0, 0, Drawables.star);
       }
 
       if (app.position != null && !isSelected) {
@@ -111,7 +110,7 @@ class GlanceView extends WatchUi.GlanceView {
           app.position,
           stop.getLocation()
         );
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
         dc.drawText(
           x - 10,
           y,
@@ -157,6 +156,8 @@ class GlanceView extends WatchUi.GlanceView {
             :locY => y,
           });
           lineElement.draw(dc);
+          
+          dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
           dc.drawText(
             x +
               lineElement.getWidth(dc) +

@@ -409,28 +409,29 @@ class MainView extends WatchUi.View {
 
   (:anyOctogonal)
   function drawFavoriteIcon(dc) {
-    dc.setColor(Graphics.COLOR_YELLOW, Graphics.COLOR_YELLOW);
+    dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
     dc.fillCircle(roundCenterX, roundCenterY, roundRadius);
-    dc.drawText(
-      roundCenterX,
-      roundCenterY,
-      Graphics.FONT_LARGE,
-      "★",
-      Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
+    var color =
+      Graphics has :createColor ? Graphics.COLOR_YELLOW : Graphics.COLOR_BLACK;
+    dc.setColor(color, color);
+    dc.drawBitmap(
+      roundCenterX - Drawables.star.getWidth() / 2,
+      roundCenterY - Drawables.star.getHeight() / 2,
+      Drawables.star
     );
   }
 
   (:anyRound)
   function drawFavoriteIcon(dc) {
-    dc.setColor(Graphics.COLOR_YELLOW, Graphics.COLOR_YELLOW);
+    var color =
+      Graphics has :createColor ? Graphics.COLOR_YELLOW : Graphics.COLOR_WHITE;
+    dc.setColor(color, color);
     var x = dc.getWidth() / 2;
     var y = dc.getHeight() * 0.15;
-    dc.drawText(
-      x,
-      y,
-      Graphics.FONT_LARGE,
-      "★",
-      Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
+    dc.drawBitmap(
+      x - Drawables.star.getWidth() / 2,
+      y - Drawables.star.getHeight() / 2,
+      Drawables.star
     );
   }
 
