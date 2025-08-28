@@ -1,13 +1,13 @@
 <strings>
     <string id="AppName">Public Transport Timetables</string>
     <string id="NoStopFound">No stop found</string>
-    <string id="NoDepartureFound">No departure found</string>
+    <string scope="glance" id="NoDepartureFound">No departure found</string>
     <string id="GettingPosition">Getting position...</string>
     <string id="GettingStops">Getting stops...</string>
-    <string id="GettingDepartures">Getting departures...</string>
+    <string scope="glance" id="GettingDepartures">Getting departures...</string>
     <string id="UnableToFetch">Unable to connect to the server</string>
 
-    <string id="NoStopSelected">No stop selected\nGetting position...</string>
+    <string scope="glance" id="NoStopSelected">No stop selected\nGetting position...</string>
 
     <string id="AddToFavorites">Add to favorites</string>
     <string id="RemoveFromFavorites">Remove from favorites</string>

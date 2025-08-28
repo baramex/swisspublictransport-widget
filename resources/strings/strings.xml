@@ -1,13 +1,13 @@
 <strings>
     <string id="AppName">Horaires Transports Publics</string>
     <string id="NoStopFound">Aucun arrêt trouvé</string>
-    <string id="NoDepartureFound">Aucun départ trouvé</string>
+    <string scope="glance" id="NoDepartureFound">Aucun départ trouvé</string>
     <string id="GettingPosition">Récupération de la position...</string>
     <string id="GettingStops">Récupération des arrêts...</string>
-    <string id="GettingDepartures">Récupération des départs...</string>
+    <string scope="glance" id="GettingDepartures">Récupération des départs...</string>
     <string id="UnableToFetch">Impossible de se connecter au serveur</string>
     
-    <string id="NoStopSelected">Pas d'arrêt sélectionné\nRécupération de la position...</string>
+    <string scope="glance" id="NoStopSelected">Pas d'arrêt sélectionné\nRécupération de la position...</string>
 
     <string id="AddToFavorites">Ajouter aux favoris</string>
     <string id="RemoveFromFavorites">Retirer des favoris</string>

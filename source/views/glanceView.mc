@@ -62,7 +62,7 @@ class GlanceView extends WatchUi.GlanceView {
         0,
         dc.getHeight() / 2,
         Graphics.FONT_SMALL,
-        Rez.Strings.NoStopSelected,
+        WatchUi.loadResource(Rez.Strings.NoStopSelected),
         Graphics.TEXT_JUSTIFY_VCENTER
       );
     } else {
@@ -126,7 +126,7 @@ class GlanceView extends WatchUi.GlanceView {
           0,
           dc.getHeight() / 2,
           Graphics.FONT_SMALL,
-          Rez.Strings.GettingDepartures,
+          WatchUi.loadResource(Rez.Strings.GettingDepartures),
           Graphics.TEXT_JUSTIFY_VCENTER
         );
       } else if (app.departures != null && app.departures.size() > 0) {
@@ -157,7 +157,7 @@ class GlanceView extends WatchUi.GlanceView {
             :locY => y,
           });
           lineElement.draw(dc);
-          
+
           dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
           dc.drawText(
             x +
@@ -191,7 +191,7 @@ class GlanceView extends WatchUi.GlanceView {
           0,
           dc.getHeight() / 2,
           Graphics.FONT_SMALL,
-          Rez.Strings.NoDepartureFound,
+          WatchUi.loadResource(Rez.Strings.NoDepartureFound),
           Graphics.TEXT_JUSTIFY_VCENTER
         );
       }

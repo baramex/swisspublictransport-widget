@@ -1,13 +1,13 @@
 <strings>
     <string id="AppName">Fahrpläne Öffentlicher Verkehr</string>
     <string id="NoStopFound">Kein Haltestelle gefunden</string>
-    <string id="NoDepartureFound">Keine Abfahrt gefunden</string>
+    <string scope="glance" id="NoDepartureFound">Keine Abfahrt gefunden</string>
     <string id="GettingPosition">Abrufen der Position...</string>
     <string id="GettingStops">Abrufen von Haltestellen...</string>
-    <string id="GettingDepartures">Abrufen der Abfahrten...</string>
+    <string scope="glance" id="GettingDepartures">Abrufen der Abfahrten...</string>
     <string id="UnableToFetch">Verbindung zum Server konnte nicht hergestellt werden</string>
 
-    <string id="NoStopSelected">Kein Halt ausgewählt\nPosition wird abgerufen...</string>
+    <string scope="glance" id="NoStopSelected">Kein Halt ausgewählt\nPosition wird abgerufen...</string>
 
     <string id="AddToFavorites">Zu Favoriten hinzufügen</string>
     <string id="RemoveFromFavorites">Aus Favoriten entfernen</string>

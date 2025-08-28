@@ -1,13 +1,13 @@
 <strings>
     <string id="AppName">Orari dei Trasporti Pubblici</string>
     <string id="NoStopFound">Nessuna fermata trovata</string>
-    <string id="NoDepartureFound">Nessuna partenza trovata</string>
+    <string scope="glance" id="NoDepartureFound">Nessuna partenza trovata</string>
     <string id="GettingPosition">Acquisizione della posizione...</string>
     <string id="GettingStops">Acquisizione delle fermate...</string>
-    <string id="GettingDepartures">Acquisizione delle partenze...</string>
+    <string scope="glance" id="GettingDepartures">Acquisizione delle partenze...</string>
     <string id="UnableToFetch">Impossibile connettersi al server</string>
 
-    <string id="NoStopSelected">Nessuna fermata selezionata\nAcquisizione della posizione...</string>
+    <string scope="glance" id="NoStopSelected">Nessuna fermata selezionata\nAcquisizione della posizione...</string>
 
     <string id="AddToFavorites">Aggiungi ai preferiti</string>
     <string id="RemoveFromFavorites">Rimuovi dai preferiti</string>
