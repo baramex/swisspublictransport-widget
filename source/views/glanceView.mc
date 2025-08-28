@@ -5,6 +5,7 @@ import Toybox.Lang;
 import Toybox.Math;
 import Toybox.Sensor;
 
+(:glance)
 class GlanceView extends WatchUi.GlanceView {
   var azimuth as Float?;
 

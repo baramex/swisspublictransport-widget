@@ -4,6 +4,7 @@ import Toybox.WatchUi;
 import Toybox.Position;
 import Toybox.Time;
 
+(:glance)
 class App extends Application.AppBase {
   enum AppState {
     GET_LOCATION,

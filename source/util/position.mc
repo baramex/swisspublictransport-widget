@@ -1,6 +1,7 @@
 import Toybox.Math;
 import Toybox.Position;
 
+(:glance)
 class PositionUtils {
   static function getDistance(loc1 as Location, loc2 as Location) {
     var lat1 = loc1.toRadians()[0];

@@ -1,6 +1,7 @@
 import Toybox.Lang;
 import Toybox.Time;
 
+(:glance)
 class Formatter {
   static function getStopsFromData(
     data as Dictionary?,
