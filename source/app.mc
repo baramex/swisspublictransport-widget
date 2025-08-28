@@ -150,7 +150,7 @@ class App extends Application.AppBase {
         null,
         method(:onDepartures)
       );
-    } else if (view != null) {
+    } else {
       WatchUi.requestUpdate();
     }
   }
@@ -248,9 +248,7 @@ class App extends Application.AppBase {
         timer.start(self.method(:onTimer), 15000, true);
       }
     }
-    if (view != null) {
-      WatchUi.requestUpdate();
-    }
+    WatchUi.requestUpdate();
 
     System.println("got departures");
   }
@@ -301,9 +299,9 @@ class App extends Application.AppBase {
       } else {
         view.horizontalScrollBar = null;
       }
-
-      WatchUi.requestUpdate();
     }
+
+    WatchUi.requestUpdate();
 
     System.println("got stops");
   }
@@ -316,9 +314,7 @@ class App extends Application.AppBase {
     }
     if (appState == GET_LOCATION) {
       appState = GET_STOPS;
-      if (view != null) {
-        WatchUi.requestUpdate();
-      }
+      WatchUi.requestUpdate();
     }
     if (
       lastStopsRequest == null ||
@@ -330,7 +326,7 @@ class App extends Application.AppBase {
         { "lat" => position.toDegrees()[0], "lon" => position.toDegrees()[1] },
         method(:onStops)
       );
-    } else if (view != null) {
+    } else {
       WatchUi.requestUpdate();
     }
   }
