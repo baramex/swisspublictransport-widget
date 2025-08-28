@@ -6,4 +6,5 @@ instinct2.excludeAnnotations = smallOctogonal;anyRound
 descentg1.excludeAnnotations = smallOctogonal;anyRound
 instincte45mm.excludeAnnotations = smallOctogonal;anyRound
 instinct2x.excludeAnnotations = smallOctogonal;anyRound
+instinct3solar45mm.excludeAnnotations = smallOctogonal;anyRound
 round.excludeAnnotations = smallOctogonal;anyOctogonal;largeOctogonal
