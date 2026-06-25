@@ -4,7 +4,7 @@ import Toybox.Time;
 (:glance)
 class Departure {
   public var order as Number;
-  public var stopRef as Number;
+  public var stopRef as String;
   public var departureTime as Moment;
   public var platformName as String;
   public var lineName as String;
@@ -17,7 +17,7 @@ class Departure {
 
   public function initialize(params as Dictionary) {
     order = params.get("order") as Number;
-    stopRef = params.get("stopRef") as Number;
+    stopRef = params.get("stopRef") as String;
     departureTime = params.get("departureTime") as Time.Moment;
     platformName = params.get("platformName") as String;
     lineName = params.get("lineName") as String;
