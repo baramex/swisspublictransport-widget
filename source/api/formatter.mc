@@ -5,7 +5,7 @@ import Toybox.Time;
 class Formatter {
   static function getStopsFromData(
     data as Dictionary?,
-    favorites as Dictionary<Number, StorageUtils.StopObject>
+    favorites as Dictionary<String, StorageUtils.StopObject>
   ) as Dictionary<Number, Stop> {
     var stops = ({}) as Dictionary<Number, Stop>;
     if (data != null) {
