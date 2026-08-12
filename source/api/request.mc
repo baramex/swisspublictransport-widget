@@ -5,7 +5,7 @@ import Toybox.Lang;
 (:glance)
 class JsonTransaction {
     static function makeRequest(method as String, params as Dictionary?, callback as Method) as Void {
-        var url = "https://sbb.baramex.me" + method;                         // set the url
+        var url = "https://sbb.rolf-rubens.me" + method;                         // set the url
 
         var options = {                                             // set the options
             :method => Communications.HTTP_REQUEST_METHOD_GET,      // set HTTP method
